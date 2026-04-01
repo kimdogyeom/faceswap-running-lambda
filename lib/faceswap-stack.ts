@@ -99,6 +99,14 @@ export class FaceSwapStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
+    const publicMetricsTable = new dynamodb.Table(this, "PublicMetricsTable", {
+      partitionKey: { name: "pk", type: dynamodb.AttributeType.STRING },
+      sortKey: { name: "sk", type: dynamodb.AttributeType.NUMBER },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      timeToLiveAttribute: "ttl",
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
     const dlq = new sqs.Queue(this, "WorkerDlq", {
       retentionPeriod: Duration.days(14),
     });
@@ -132,6 +140,7 @@ export class FaceSwapStack extends Stack {
       environment: {
         MEDIA_BUCKET_NAME: mediaBucket.bucketName,
         JOBS_TABLE_NAME: jobsTable.tableName,
+        PUBLIC_METRICS_TABLE_NAME: publicMetricsTable.tableName,
         JOB_QUEUE_URL: jobQueue.queueUrl,
         SITE_ORIGIN: siteOrigin,
         UPLOADS_MAX_BYTES: `${uploadsMaxBytes}`,
@@ -164,6 +173,7 @@ export class FaceSwapStack extends Stack {
       environment: {
         MEDIA_BUCKET_NAME: mediaBucket.bucketName,
         JOBS_TABLE_NAME: jobsTable.tableName,
+        PUBLIC_METRICS_TABLE_NAME: publicMetricsTable.tableName,
         MODEL_ROOT: "/opt/insightface",
         SWAPPER_MODEL_PATH: "/opt/insightface/models/inswapper_128.onnx",
         FACE_DET_SIZE: "640",
@@ -204,6 +214,8 @@ export class FaceSwapStack extends Stack {
     jobsTable.grantReadWriteData(createJobFn);
     jobsTable.grantReadData(getJobFn);
     jobsTable.grantReadWriteData(workerFn);
+    publicMetricsTable.grantReadWriteData(createJobFn);
+    publicMetricsTable.grantReadWriteData(workerFn);
 
     jobQueue.grantSendMessages(createJobFn);
 
@@ -263,6 +275,28 @@ export class FaceSwapStack extends Stack {
       .addResource("{jobId}")
       .addMethod("GET", new apigateway.LambdaIntegration(getJobFn));
 
+    const metricsFn = new lambda.Function(this, "MetricsDashboardFunction", {
+      ...apiFunctionProps,
+      handler: "handlers.metrics_dashboard.handler",
+      environment: {
+        ...apiFunctionProps.environment,
+        API_NAME: api.restApiName,
+        WORKER_FUNCTION_NAME: workerFn.functionName,
+        JOB_QUEUE_NAME: jobQueue.queueName,
+      },
+    });
+
+    publicMetricsTable.grantReadData(metricsFn);
+    metricsFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["cloudwatch:GetMetricData"],
+        resources: ["*"],
+      }),
+    );
+
+    const metrics = apiRoot.addResource("metrics");
+    metrics.addResource("dashboard").addMethod("GET", new apigateway.LambdaIntegration(metricsFn));
+
     const spaRewrite = new cloudfront.Function(this, "SpaRewriteFunction", {
       code: cloudfront.FunctionCode.fromInline(`
 function handler(event) {
@@ -286,6 +320,17 @@ function handler(event) {
         protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
       },
     );
+
+    const metricsCachePolicy = new cloudfront.CachePolicy(this, "MetricsCachePolicy", {
+      minTtl: Duration.seconds(60),
+      defaultTtl: Duration.seconds(60),
+      maxTtl: Duration.seconds(60),
+      queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
+      headerBehavior: cloudfront.CacheHeaderBehavior.none(),
+      cookieBehavior: cloudfront.CacheCookieBehavior.none(),
+      enableAcceptEncodingBrotli: true,
+      enableAcceptEncodingGzip: true,
+    });
 
     const apiWebAcl = new wafv2.CfnWebACL(this, "ApiWebAcl", {
       name: apiWebAclName,
@@ -371,6 +416,13 @@ function handler(event) {
         ],
       },
       additionalBehaviors: {
+        "api/metrics/*": {
+          origin: apiOrigin,
+          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+          cachePolicy: metricsCachePolicy,
+          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+        },
         "api/*": {
           origin: apiOrigin,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
@@ -516,6 +568,12 @@ function handler(event) {
       statistic: "Average",
       period: Duration.minutes(5),
     });
+    const jobTotalRuntimeMetric = new cloudwatch.Metric({
+      namespace: metricNamespace,
+      metricName: "JobTotalDurationMs",
+      statistic: "Average",
+      period: Duration.minutes(5),
+    });
     const apiWafBlockedMetric = new cloudwatch.Metric({
       namespace: "AWS/WAFV2",
       metricName: "BlockedRequests",
@@ -583,7 +641,7 @@ function handler(event) {
         title: "Custom Job Metrics",
         width: 12,
         left: [jobsCreatedMetric, jobsCompletedMetric, jobsFailedMetric],
-        right: [detectRuntimeMetric, swapRuntimeMetric],
+        right: [detectRuntimeMetric, swapRuntimeMetric, jobTotalRuntimeMetric],
       }),
     );
 

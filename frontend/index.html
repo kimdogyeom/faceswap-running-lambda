@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Face Swap</title>
+    <script>
+      document.documentElement.dataset.route = location.pathname.startsWith("/dashboard")
+        ? "dashboard"
+        : "home";
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,84 +18,194 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="shell">
-      <section class="hero">
-        <p class="eyebrow">AWS Lambda + InsightFace</p>
-        <h1>Pick two images. Pick two faces. Get one swap result.</h1>
-        <p class="lede">
-          Upload a source portrait and a target image, select one face in each, then run a
-          serverless face swap job. Uploaded files and results expire after 24 hours.
-        </p>
-      </section>
+    <main class="shell app-shell">
+      <header class="topbar">
+        <a class="brand" href="/">Face Swap Running on Lambda</a>
+        <nav class="topnav" aria-label="Primary">
+          <a class="nav-link" href="/">Face Swap</a>
+          <a class="nav-link" href="/dashboard">Dashboard</a>
+        </nav>
+      </header>
 
-      <section class="workspace">
-        <div class="card">
-          <div class="card-head">
-            <div>
-              <p class="card-kicker">Step 1</p>
-              <h2>Source Image</h2>
-            </div>
-            <label class="upload-button">
-              <input id="source-input" type="file" accept="image/jpeg,image/png" />
-              Choose source
-            </label>
-          </div>
-          <p class="hint">Choose the identity to copy. Click one detected face to confirm.</p>
-          <div id="source-stage" class="image-stage"></div>
-          <p id="source-status" class="status">Waiting for upload.</p>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <div>
-              <p class="card-kicker">Step 2</p>
-              <h2>Target Image</h2>
-            </div>
-            <label class="upload-button">
-              <input id="target-input" type="file" accept="image/jpeg,image/png" />
-              Choose target
-            </label>
-          </div>
-          <p class="hint">Choose the face to replace inside the target image.</p>
-          <div id="target-stage" class="image-stage"></div>
-          <p id="target-status" class="status">Waiting for upload.</p>
-        </div>
-      </section>
-
-      <section class="actions">
-        <div class="card action-card">
-          <div class="action-grid">
-            <label class="field">
-              <span>Output format</span>
-              <select id="output-format">
-                <option value="jpeg" selected>JPEG</option>
-                <option value="png">PNG</option>
-              </select>
-            </label>
-            <button id="run-job" class="primary-button" disabled>Run Face Swap</button>
-          </div>
-          <p id="job-status" class="status">Upload both images and select one face in each.</p>
-        </div>
-      </section>
-
-      <section class="result-section">
-        <div class="card result-card">
-          <div class="card-head">
-            <div>
-              <p class="card-kicker">Step 4</p>
-              <h2>Result Preview</h2>
-            </div>
-            <button id="download-result" class="secondary-button hidden" type="button">
-              Download Result
-            </button>
-          </div>
-          <p id="result-status" class="status">
-            Run a job to preview the generated image here.
+      <section id="swap-view" class="page-view swap-view">
+        <section class="hero">
+          <p class="eyebrow">AWS Lambda + InsightFace</p>
+          <h1>Pick two images. Pick two faces. Get one swap result.</h1>
+          <p class="lede">
+            Upload a source portrait and a target image, select one face in each, then run a
+            serverless face swap job. Uploaded files and results expire after 24 hours.
           </p>
-          <div id="result-stage" class="result-stage">
-            <p class="hint">The generated face swap will appear here when processing finishes.</p>
+        </section>
+
+        <section class="workspace">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Step 1</p>
+                <h2>Source Image</h2>
+              </div>
+              <label class="upload-button">
+                <input id="source-input" type="file" accept="image/jpeg,image/png" />
+                Choose source
+              </label>
+            </div>
+            <p class="hint">Choose the identity to copy. Click one detected face to confirm.</p>
+            <div id="source-stage" class="image-stage"></div>
+            <p id="source-status" class="status">Waiting for upload.</p>
           </div>
-        </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Step 2</p>
+                <h2>Target Image</h2>
+              </div>
+              <label class="upload-button">
+                <input id="target-input" type="file" accept="image/jpeg,image/png" />
+                Choose target
+              </label>
+            </div>
+            <p class="hint">Choose the face to replace inside the target image.</p>
+            <div id="target-stage" class="image-stage"></div>
+            <p id="target-status" class="status">Waiting for upload.</p>
+          </div>
+        </section>
+
+        <section class="actions">
+          <div class="card action-card">
+            <div class="action-grid">
+              <label class="field">
+                <span>Output format</span>
+                <select id="output-format">
+                  <option value="jpeg" selected>JPEG</option>
+                  <option value="png">PNG</option>
+                </select>
+              </label>
+              <button id="run-job" class="primary-button" disabled>Run Face Swap</button>
+            </div>
+            <p id="job-status" class="status">Upload both images and select one face in each.</p>
+          </div>
+        </section>
+
+        <section class="result-section">
+          <div class="card result-card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Step 4</p>
+                <h2>Result Preview</h2>
+              </div>
+              <button id="download-result" class="secondary-button hidden" type="button">
+                Download Result
+              </button>
+            </div>
+            <p id="result-status" class="status">
+              Run a job to preview the generated image here.
+            </p>
+            <div id="result-stage" class="result-stage">
+              <p class="hint">The generated face swap will appear here when processing finishes.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="dashboard-view" class="page-view dashboard-view">
+        <section class="card dashboard-hero">
+          <div class="dashboard-hero-copy">
+            <p class="eyebrow">Public Dashboard</p>
+            <h1>Service health for the last 24 hours.</h1>
+            <p class="lede">
+              This view exposes aggregated product metrics only. It does not reveal job IDs,
+              presigned URLs, upload keys, or raw logs.
+            </p>
+          </div>
+          <div class="dashboard-hero-meta">
+            <span id="dashboard-status-badge" class="status-pill status-pill-loading">Loading</span>
+            <button id="dashboard-refresh" class="secondary-button" type="button">Refresh</button>
+            <p id="dashboard-last-updated" class="meta-copy">Loading dashboard metrics...</p>
+          </div>
+        </section>
+
+        <div id="dashboard-banner" class="banner hidden" role="status" aria-live="polite"></div>
+
+        <section class="metric-grid" aria-label="Summary metrics">
+          <article class="card metric-card">
+            <p class="metric-label">Requests</p>
+            <p id="metric-requests" class="metric-value">--</p>
+            <p class="metric-note">Accepted swap jobs in the last 24 hours</p>
+          </article>
+          <article class="card metric-card">
+            <p class="metric-label">Completed</p>
+            <p id="metric-completed" class="metric-value">--</p>
+            <p class="metric-note">Jobs that finished successfully</p>
+          </article>
+          <article class="card metric-card">
+            <p class="metric-label">Failed</p>
+            <p id="metric-failed" class="metric-value">--</p>
+            <p class="metric-note">Jobs that returned a terminal error</p>
+          </article>
+          <article class="card metric-card">
+            <p class="metric-label">Success rate</p>
+            <p id="metric-success-rate" class="metric-value">--</p>
+            <p class="metric-note">Completed jobs divided by terminal jobs</p>
+          </article>
+          <article class="card metric-card">
+            <p class="metric-label">Failure rate</p>
+            <p id="metric-failure-rate" class="metric-value">--</p>
+            <p class="metric-note">Failed jobs divided by terminal jobs</p>
+          </article>
+          <article class="card metric-card">
+            <p class="metric-label">Average latency</p>
+            <p id="metric-avg-latency" class="metric-value">--</p>
+            <p class="metric-note">End-to-end job duration</p>
+          </article>
+          <article class="card metric-card">
+            <p class="metric-label">P95 latency</p>
+            <p id="metric-p95-latency" class="metric-value">--</p>
+            <p class="metric-note">95th percentile job duration</p>
+          </article>
+          <article class="card metric-card metric-card-status">
+            <p class="metric-label">Service status</p>
+            <p id="metric-status-label" class="metric-value">--</p>
+            <p id="metric-status-reason" class="metric-note">Waiting for the first snapshot.</p>
+          </article>
+        </section>
+
+        <section class="chart-grid">
+          <article class="card chart-card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Trend</p>
+                <h2>Requests, Completed, Failed</h2>
+              </div>
+            </div>
+            <svg
+              id="trend-chart"
+              class="trend-chart"
+              viewBox="0 0 1000 320"
+              preserveAspectRatio="none"
+              role="img"
+              aria-label="24 hour activity chart"
+            ></svg>
+          </article>
+
+          <article class="card chart-card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Breakdown</p>
+                <h2>Failure codes</h2>
+              </div>
+            </div>
+            <div id="failure-chart" class="failure-chart"></div>
+          </article>
+        </section>
+
+        <section id="dashboard-empty" class="card empty-state hidden">
+          <h2>No jobs yet</h2>
+          <p>
+            Run the face-swap tool a few times and the dashboard will start showing live totals,
+            latency, and failure breakdowns.
+          </p>
+        </section>
       </section>
     </main>
 
@@ -102,5 +217,6 @@
     </template>
 
     <script src="./app.js" type="module"></script>
+    <script src="./dashboard.js" type="module"></script>
   </body>
 </html>

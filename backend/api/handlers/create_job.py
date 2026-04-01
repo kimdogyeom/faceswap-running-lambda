@@ -8,6 +8,7 @@ from botocore.exceptions import ClientError
 
 from .common import bad_request, json_response, parse_body, require_fields, server_error
 from .observability import log_event, publish_metric
+from .public_metrics import increment_public_metrics
 
 dynamodb = boto3.resource("dynamodb")
 sqs_client = boto3.client("sqs")
@@ -173,6 +174,18 @@ def handler(event, context):
 
     duration_ms = round((time.perf_counter() - started_at) * 1000)
     publish_metric("JobsCreated", 1)
+    try:
+        increment_public_metrics(created_delta=1)
+    except Exception as error:
+        log_event(
+            "api.create_job",
+            "record_public_metrics",
+            "error",
+            request_id=request_id,
+            job_id=job_id,
+            duration_ms=duration_ms,
+            message=str(error),
+        )
     log_event(
         "api.create_job",
         "enqueue",

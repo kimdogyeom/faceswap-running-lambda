@@ -35,18 +35,23 @@ jobs:
         run: npm run check
 
       - name: Validate frontend script
-        run: node --check frontend/app.js
+        run: |
+          node --check frontend/app.js
+          node --check frontend/dashboard.js
 
       - name: Compile Python handlers
         run: >
           python3 -m py_compile
           backend/api/handlers/common.py
+          backend/api/handlers/public_metrics.py
           backend/api/handlers/observability.py
           backend/api/handlers/presign.py
           backend/api/handlers/create_job.py
           backend/api/handlers/get_job.py
+          backend/api/handlers/metrics_dashboard.py
           backend/ml/shared/runtime.py
           backend/ml/shared/observability.py
+          backend/ml/shared/public_metrics.py
           backend/ml/handlers/detect.py
           backend/ml/handlers/worker.py
           backend/ml/download_models.py

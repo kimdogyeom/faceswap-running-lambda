@@ -35,6 +35,7 @@ flowchart LR
 
 - 정적 프론트엔드는 `https://face-swap.aigyeom.com`에서 제공됩니다.
 - API는 같은 CloudFront 배포 아래 `/api/*` 경로로 노출됩니다.
+- 공개 대시보드는 같은 사이트에서 `/dashboard` 경로로 제공합니다.
 - 브라우저는 presigned URL을 받아 원본 이미지를 S3에 직접 업로드합니다.
 - Detect Lambda는 `buffalo_l`로 얼굴을 찾고, 사용자는 얼굴 인덱스를 선택합니다.
 - Worker Lambda는 `inswapper_128.onnx`를 실행해 결과 이미지를 S3에 저장합니다.
@@ -57,11 +58,19 @@ flowchart LR
 - API Gateway stage access log가 활성화되어 있습니다.
 - 백엔드 핸들러는 `service`, `jobId`, `stage`, `status`, `durationMs`, `requestId`를 포함한 구조화 로그를 남깁니다.
 
+## 공개 대시보드
+
+- `/dashboard`는 최근 24시간 기준의 집계 메트릭만 공개합니다.
+- 노출 항목은 요청 수, 완료 수, 실패 수, 성공률, 실패율, 평균 지연시간, p95 지연시간, 상태 배지, 요청/완료/실패 추이, 정규화된 실패 코드 분포입니다.
+- 원본 jobId, presigned URL, 업로드 키, 파일명, raw error, AWS 리소스 이름 같은 민감 정보는 포함하지 않습니다.
+- 공개 대시보드 데이터는 전용 집계 API `GET /api/metrics/dashboard`에서 제공되고, CloudFront에서 60초 캐시됩니다.
+- 상세 운영 메트릭과 알람은 계속 AWS 내부 CloudWatch Dashboard에서 확인합니다.
+
 ## CI/CD
 
 GitHub Actions 워크플로우는 [pipeline.yml](/home/gyeom/faceswap/.github/workflows/pipeline.yml#L1)에 있습니다.
 
-- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, Python `py_compile`, 선택적 `cdk synth`
+- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, `node --check frontend/dashboard.js`, Python `py_compile`, 선택적 `cdk synth`
 - `main` push: 같은 검증 후 GitHub OIDC로 AWS 인증하고 `cdk deploy`
 
 필수 GitHub repository variables:

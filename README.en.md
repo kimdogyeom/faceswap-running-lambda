@@ -35,6 +35,7 @@ flowchart LR
 
 - The static frontend is served at `https://face-swap.aigyeom.com`.
 - API Gateway is exposed behind the same CloudFront distribution under `/api/*`.
+- A public dashboard is available under `/dashboard`.
 - The browser uploads source and target images directly to S3 with presigned URLs.
 - Detect Lambda uses `buffalo_l` to find selectable faces.
 - Worker Lambda runs `inswapper_128.onnx` asynchronously and writes results back to S3.
@@ -57,11 +58,19 @@ flowchart LR
 - API Gateway stage access logs are enabled.
 - Backend handlers emit structured JSON logs with `service`, `jobId`, `stage`, `status`, `durationMs`, and `requestId`.
 
+## Public Dashboard
+
+- `/dashboard` exposes aggregated metrics for the last 24 hours only.
+- The page shows requests, completed jobs, failed jobs, success rate, failure rate, average latency, p95 latency, a service status badge, a 24-hour activity trend, and normalized failure-code distribution.
+- It does not expose job IDs, presigned URLs, upload keys, filenames, raw errors, or AWS resource identifiers.
+- Data is served from `GET /api/metrics/dashboard` and cached at CloudFront for 60 seconds.
+- Detailed operational alarms and raw infrastructure metrics remain in the private AWS CloudWatch dashboard.
+
 ## CI/CD
 
 GitHub Actions is defined in [pipeline.yml](/home/gyeom/faceswap/.github/workflows/pipeline.yml#L1).
 
-- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, Python `py_compile`, optional `cdk synth`
+- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, `node --check frontend/dashboard.js`, Python `py_compile`, optional `cdk synth`
 - `push` on `main`: same validation, then automatic deploy with GitHub OIDC and `cdk deploy`
 
 Required GitHub repository variables:
