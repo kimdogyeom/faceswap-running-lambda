@@ -1,0 +1,101 @@
+name: pipeline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: faceswap-running-lambda-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run check
+
+      - name: Validate frontend script
+        run: node --check frontend/app.js
+
+      - name: Compile Python handlers
+        run: >
+          python3 -m py_compile
+          backend/api/handlers/common.py
+          backend/api/handlers/observability.py
+          backend/api/handlers/presign.py
+          backend/api/handlers/create_job.py
+          backend/api/handlers/get_job.py
+          backend/ml/shared/runtime.py
+          backend/ml/shared/observability.py
+          backend/ml/handlers/detect.py
+          backend/ml/handlers/worker.py
+          backend/ml/download_models.py
+          backend/ops/discord_notifier/index.py
+
+      - name: CDK synth
+        if: ${{ vars.CDK_DEFAULT_ACCOUNT != '' && vars.AWS_REGION != '' && vars.ROOT_DOMAIN_NAME != '' && vars.SITE_SUBDOMAIN != '' }}
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ vars.CDK_DEFAULT_ACCOUNT }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+          ROOT_DOMAIN_NAME: ${{ vars.ROOT_DOMAIN_NAME }}
+          SITE_SUBDOMAIN: ${{ vars.SITE_SUBDOMAIN }}
+          GITHUB_REPOSITORY_OWNER: kimdogyeom
+          GITHUB_REPOSITORY_NAME: faceswap-running-lambda
+        run: npm run synth
+
+  deploy:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.AWS_ROLE_ARN != '' && vars.CDK_DEFAULT_ACCOUNT != '' && vars.AWS_REGION != '' && vars.ROOT_DOMAIN_NAME != '' && vars.SITE_SUBDOMAIN != '' }}
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy stack
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ vars.CDK_DEFAULT_ACCOUNT }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+          ROOT_DOMAIN_NAME: ${{ vars.ROOT_DOMAIN_NAME }}
+          SITE_SUBDOMAIN: ${{ vars.SITE_SUBDOMAIN }}
+          GITHUB_REPOSITORY_OWNER: kimdogyeom
+          GITHUB_REPOSITORY_NAME: faceswap-running-lambda
+          DISCORD_WEBHOOK_SECRET_ARN: ${{ secrets.DISCORD_WEBHOOK_SECRET_ARN }}
+        run: npm run deploy -- FaceSwapStack --require-approval never

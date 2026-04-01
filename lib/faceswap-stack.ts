@@ -11,8 +11,11 @@ import {
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
+import * as cloudwatchActions from "aws-cdk-lib/aws-cloudwatch-actions";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 import * as logs from "aws-cdk-lib/aws-logs";
@@ -20,6 +23,9 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import * as route53Targets from "aws-cdk-lib/aws-route53-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
+import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
+import * as sns from "aws-cdk-lib/aws-sns";
+import * as snsSubscriptions from "aws-cdk-lib/aws-sns-subscriptions";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as wafv2 from "aws-cdk-lib/aws-wafv2";
 import { Construct } from "constructs";
@@ -35,6 +41,12 @@ export class FaceSwapStack extends Stack {
     const deploymentRegion = props?.env?.region ?? process.env.CDK_DEFAULT_REGION ?? "us-east-1";
     const enableEdgeWaf = deploymentRegion === "us-east-1";
     const uploadsMaxBytes = 10 * 1024 * 1024;
+    const metricNamespace = "FaceSwapService";
+    const githubRepoOwner = process.env.GITHUB_REPOSITORY_OWNER ?? "kimdogyeom";
+    const githubRepoName = process.env.GITHUB_REPOSITORY_NAME ?? "faceswap-running-lambda";
+    const discordWebhookSecretArn = process.env.DISCORD_WEBHOOK_SECRET_ARN ?? "";
+    const apiWebAclName = `${this.stackName.toLowerCase()}-api-acl`;
+    const edgeWebAclName = `${this.stackName.toLowerCase()}-edge-acl`;
 
     const hostedZone = route53.HostedZone.fromLookup(this, "HostedZone", {
       domainName: rootDomain,
@@ -100,7 +112,16 @@ export class FaceSwapStack extends Stack {
       },
     });
 
+    const alarmTopic = new sns.Topic(this, "AlarmTopic", {
+      displayName: `${this.stackName} alerts`,
+      topicName: `${this.stackName}-alerts`,
+    });
+
     const apiCode = lambda.Code.fromAsset(path.join(__dirname, "../backend/api"));
+    const apiAccessLogGroup = new logs.LogGroup(this, "ApiAccessLogs", {
+      retention: logs.RetentionDays.ONE_WEEK,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
 
     const apiFunctionProps: Omit<lambda.FunctionProps, "handler"> = {
       runtime: lambda.Runtime.PYTHON_3_10,
@@ -115,6 +136,7 @@ export class FaceSwapStack extends Stack {
         SITE_ORIGIN: siteOrigin,
         UPLOADS_MAX_BYTES: `${uploadsMaxBytes}`,
         DOWNLOAD_URL_EXPIRES_SECONDS: `${15 * 60}`,
+        METRIC_NAMESPACE: metricNamespace,
       },
     };
 
@@ -133,7 +155,7 @@ export class FaceSwapStack extends Stack {
       handler: "handlers.get_job.handler",
     });
 
-    const mlFunctionBase = {
+    const mlFunctionBase: Omit<lambda.DockerImageFunctionProps, "code"> = {
       architecture: lambda.Architecture.X86_64,
       memorySize: 3008,
       timeout: Duration.seconds(120),
@@ -147,6 +169,8 @@ export class FaceSwapStack extends Stack {
         FACE_DET_SIZE: "640",
         MAX_IMAGE_SIDE: "2048",
         UPLOADS_MAX_BYTES: `${uploadsMaxBytes}`,
+        METRIC_NAMESPACE: metricNamespace,
+        MPLCONFIGDIR: "/tmp/matplotlib",
       },
     };
 
@@ -183,6 +207,20 @@ export class FaceSwapStack extends Stack {
 
     jobQueue.grantSendMessages(createJobFn);
 
+    for (const fn of [createJobFn, detectFn, workerFn]) {
+      fn.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: ["cloudwatch:PutMetricData"],
+          resources: ["*"],
+          conditions: {
+            StringEquals: {
+              "cloudwatch:namespace": metricNamespace,
+            },
+          },
+        }),
+      );
+    }
+
     const api = new apigateway.RestApi(this, "FaceSwapApi", {
       restApiName: "FaceSwapService",
       deployOptions: {
@@ -192,6 +230,18 @@ export class FaceSwapStack extends Stack {
         loggingLevel: apigateway.MethodLoggingLevel.INFO,
         dataTraceEnabled: false,
         metricsEnabled: true,
+        accessLogDestination: new apigateway.LogGroupLogDestination(apiAccessLogGroup),
+        accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields({
+          httpMethod: true,
+          ip: true,
+          protocol: true,
+          requestTime: true,
+          resourcePath: true,
+          responseLength: true,
+          status: true,
+          caller: false,
+          user: false,
+        }),
       },
       defaultCorsPreflightOptions: {
         allowHeaders: ["Content-Type", "Authorization"],
@@ -238,6 +288,7 @@ function handler(event) {
     );
 
     const apiWebAcl = new wafv2.CfnWebACL(this, "ApiWebAcl", {
+      name: apiWebAclName,
       defaultAction: { allow: {} },
       scope: "REGIONAL",
       visibilityConfig: {
@@ -273,6 +324,7 @@ function handler(event) {
     const edgeWebAcl =
       enableEdgeWaf
         ? new wafv2.CfnWebACL(this, "SiteWebAcl", {
+            name: edgeWebAclName,
             defaultAction: { allow: {} },
             scope: "CLOUDFRONT",
             visibilityConfig: {
@@ -348,6 +400,255 @@ function handler(event) {
       target: route53.RecordTarget.fromAlias(new route53Targets.CloudFrontTarget(distribution)),
     });
 
+    const githubOidcProvider = iam.OpenIdConnectProvider.fromOpenIdConnectProviderArn(
+      this,
+      "GitHubOidcProvider",
+      `arn:${Aws.PARTITION}:iam::${Aws.ACCOUNT_ID}:oidc-provider/token.actions.githubusercontent.com`,
+    );
+
+    const githubDeployRole = new iam.Role(this, "GitHubDeployRole", {
+      roleName: `${this.stackName}-github-deploy-role`,
+      description: `Deploy ${this.stackName} from GitHub Actions for ${githubRepoOwner}/${githubRepoName}`,
+      assumedBy: new iam.OpenIdConnectPrincipal(githubOidcProvider).withConditions({
+        StringEquals: {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+          "token.actions.githubusercontent.com:sub": `repo:${githubRepoOwner}/${githubRepoName}:ref:refs/heads/main`,
+        },
+      }),
+    });
+
+    githubDeployRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [`arn:${Aws.PARTITION}:iam::${Aws.ACCOUNT_ID}:role/cdk-hnb659fds-*`],
+      }),
+    );
+    githubDeployRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameter"],
+        resources: [`arn:${Aws.PARTITION}:ssm:*:${Aws.ACCOUNT_ID}:parameter/cdk-bootstrap/hnb659fds/version`],
+      }),
+    );
+    githubDeployRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["cloudformation:DescribeStacks", "cloudformation:GetTemplate", "cloudformation:ListStacks"],
+        resources: ["*"],
+      }),
+    );
+
+    if (discordWebhookSecretArn) {
+      const discordSecret = secretsmanager.Secret.fromSecretCompleteArn(
+        this,
+        "DiscordWebhookSecret",
+        discordWebhookSecretArn,
+      );
+      const discordNotifierFn = new lambda.Function(this, "DiscordNotifierFunction", {
+        runtime: lambda.Runtime.PYTHON_3_10,
+        handler: "index.handler",
+        code: lambda.Code.fromAsset(path.join(__dirname, "../backend/ops/discord_notifier")),
+        timeout: Duration.seconds(30),
+        memorySize: 256,
+        logRetention: logs.RetentionDays.ONE_WEEK,
+        environment: {
+          DISCORD_WEBHOOK_SECRET_ARN: discordWebhookSecretArn,
+          SITE_URL: siteOrigin,
+        },
+      });
+      discordSecret.grantRead(discordNotifierFn);
+      alarmTopic.addSubscription(new snsSubscriptions.LambdaSubscription(discordNotifierFn));
+    }
+
+    const apiCountMetric = api.metricCount({ statistic: "Sum", period: Duration.minutes(5) });
+    const api4xxMetric = api.metricClientError({ statistic: "Sum", period: Duration.minutes(5) });
+    const api5xxMetric = api.metricServerError({ statistic: "Sum", period: Duration.minutes(5) });
+    const apiLatencyMetric = api.metricLatency({ statistic: "p95", period: Duration.minutes(5) });
+    const detectDurationMetric = detectFn.metricDuration({ statistic: "Average", period: Duration.minutes(5) });
+    const detectErrorMetric = detectFn.metricErrors({ statistic: "Sum", period: Duration.minutes(5) });
+    const detectThrottleMetric = detectFn.metricThrottles({ statistic: "Sum", period: Duration.minutes(5) });
+    const detectConcurrencyMetric = detectFn.metric("ConcurrentExecutions", {
+      statistic: "Maximum",
+      period: Duration.minutes(5),
+    });
+    const workerDurationMetric = workerFn.metricDuration({ statistic: "Average", period: Duration.minutes(5) });
+    const workerMaxDurationMetric = workerFn.metricDuration({ statistic: "Maximum", period: Duration.minutes(5) });
+    const workerErrorMetric = workerFn.metricErrors({ statistic: "Sum", period: Duration.minutes(5) });
+    const workerThrottleMetric = workerFn.metricThrottles({ statistic: "Sum", period: Duration.minutes(5) });
+    const workerConcurrencyMetric = workerFn.metric("ConcurrentExecutions", {
+      statistic: "Maximum",
+      period: Duration.minutes(5),
+    });
+    const queueVisibleMetric = jobQueue.metricApproximateNumberOfMessagesVisible({
+      period: Duration.minutes(5),
+    });
+    const queueAgeMetric = jobQueue.metricApproximateAgeOfOldestMessage({
+      period: Duration.minutes(5),
+    });
+    const dlqVisibleMetric = dlq.metricApproximateNumberOfMessagesVisible({
+      period: Duration.minutes(5),
+    });
+    const jobsCreatedMetric = new cloudwatch.Metric({
+      namespace: metricNamespace,
+      metricName: "JobsCreated",
+      statistic: "Sum",
+      period: Duration.minutes(5),
+    });
+    const jobsCompletedMetric = new cloudwatch.Metric({
+      namespace: metricNamespace,
+      metricName: "JobsCompleted",
+      statistic: "Sum",
+      period: Duration.minutes(5),
+    });
+    const jobsFailedMetric = new cloudwatch.Metric({
+      namespace: metricNamespace,
+      metricName: "JobsFailed",
+      statistic: "Sum",
+      period: Duration.minutes(5),
+    });
+    const detectRuntimeMetric = new cloudwatch.Metric({
+      namespace: metricNamespace,
+      metricName: "DetectDurationMs",
+      statistic: "Average",
+      period: Duration.minutes(5),
+    });
+    const swapRuntimeMetric = new cloudwatch.Metric({
+      namespace: metricNamespace,
+      metricName: "SwapDurationMs",
+      statistic: "Average",
+      period: Duration.minutes(5),
+    });
+    const apiWafBlockedMetric = new cloudwatch.Metric({
+      namespace: "AWS/WAFV2",
+      metricName: "BlockedRequests",
+      statistic: "Sum",
+      period: Duration.minutes(5),
+      dimensionsMap: {
+        WebACL: apiWebAclName,
+        Rule: "ALL",
+        Region: deploymentRegion,
+      },
+    });
+    const edgeWafBlockedMetric = enableEdgeWaf
+      ? new cloudwatch.Metric({
+          namespace: "AWS/WAFV2",
+          metricName: "BlockedRequests",
+          statistic: "Sum",
+          period: Duration.minutes(5),
+          dimensionsMap: {
+            WebACL: edgeWebAclName,
+            Rule: "ALL",
+            Region: "Global",
+          },
+        })
+      : undefined;
+
+    const dashboard = new cloudwatch.Dashboard(this, "OperationsDashboard", {
+      dashboardName: `${this.stackName}-operations`,
+    });
+
+    dashboard.addWidgets(
+      new cloudwatch.TextWidget({
+        width: 24,
+        height: 3,
+        markdown: [
+          "## Face Swap Operations",
+          `- Site: ${siteOrigin}`,
+          `- API: ${siteOrigin}/api`,
+          `- Queue: ${jobQueue.queueName}`,
+        ].join("\n"),
+      }),
+      new cloudwatch.GraphWidget({
+        title: "API Traffic, Errors, and Latency",
+        width: 12,
+        left: [apiCountMetric, api4xxMetric, api5xxMetric],
+        right: [apiLatencyMetric],
+      }),
+      new cloudwatch.GraphWidget({
+        title: "Detect Lambda",
+        width: 12,
+        left: [detectDurationMetric, detectErrorMetric, detectThrottleMetric],
+        right: [detectConcurrencyMetric],
+      }),
+      new cloudwatch.GraphWidget({
+        title: "Worker Lambda",
+        width: 12,
+        left: [workerDurationMetric, workerErrorMetric, workerThrottleMetric],
+        right: [workerConcurrencyMetric],
+      }),
+      new cloudwatch.GraphWidget({
+        title: "Queue Health",
+        width: 12,
+        left: [queueVisibleMetric, dlqVisibleMetric, queueAgeMetric],
+      }),
+      new cloudwatch.GraphWidget({
+        title: "Custom Job Metrics",
+        width: 12,
+        left: [jobsCreatedMetric, jobsCompletedMetric, jobsFailedMetric],
+        right: [detectRuntimeMetric, swapRuntimeMetric],
+      }),
+    );
+
+    dashboard.addWidgets(
+      new cloudwatch.GraphWidget({
+        title: "WAF Blocked Requests",
+        width: 12,
+        left: edgeWafBlockedMetric ? [apiWafBlockedMetric, edgeWafBlockedMetric] : [apiWafBlockedMetric],
+      }),
+    );
+
+    const alarmAction = new cloudwatchActions.SnsAction(alarmTopic);
+    const alarms = [
+      new cloudwatch.Alarm(this, "Api5xxAlarm", {
+        alarmName: `${this.stackName}-api-5xx`,
+        metric: api5xxMetric,
+        threshold: 5,
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      }),
+      new cloudwatch.Alarm(this, "WorkerErrorsAlarm", {
+        alarmName: `${this.stackName}-worker-errors`,
+        metric: workerErrorMetric,
+        threshold: 1,
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      }),
+      new cloudwatch.Alarm(this, "WorkerDurationAlarm", {
+        alarmName: `${this.stackName}-worker-duration`,
+        metric: workerMaxDurationMetric,
+        threshold: 90_000,
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      }),
+      new cloudwatch.Alarm(this, "QueueAgeAlarm", {
+        alarmName: `${this.stackName}-queue-age`,
+        metric: queueAgeMetric,
+        threshold: 300,
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      }),
+      new cloudwatch.Alarm(this, "DlqVisibleAlarm", {
+        alarmName: `${this.stackName}-dlq-visible`,
+        metric: dlqVisibleMetric,
+        threshold: 1,
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      }),
+    ];
+
+    for (const alarm of alarms) {
+      alarm.addAlarmAction(alarmAction);
+      alarm.addOkAction(alarmAction);
+    }
+
     new CfnOutput(this, "SiteUrl", {
       value: siteOrigin,
     });
@@ -362,6 +663,18 @@ function handler(event) {
 
     new CfnOutput(this, "CloudFrontDistributionId", {
       value: distribution.distributionId,
+    });
+
+    new CfnOutput(this, "OperationsDashboardName", {
+      value: dashboard.dashboardName,
+    });
+
+    new CfnOutput(this, "AlarmTopicArn", {
+      value: alarmTopic.topicArn,
+    });
+
+    new CfnOutput(this, "GitHubDeployRoleArn", {
+      value: githubDeployRole.roleArn,
     });
   }
 }
