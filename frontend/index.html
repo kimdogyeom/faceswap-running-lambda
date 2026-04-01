@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face Swap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">AWS Lambda + InsightFace</p>
+        <h1>Pick two images. Pick two faces. Get one swap result.</h1>
+        <p class="lede">
+          Upload a source portrait and a target image, select one face in each, then run a
+          serverless face swap job. Uploaded files and results expire after 24 hours.
+        </p>
+      </section>
+
+      <section class="workspace">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <p class="card-kicker">Step 1</p>
+              <h2>Source Image</h2>
+            </div>
+            <label class="upload-button">
+              <input id="source-input" type="file" accept="image/jpeg,image/png" />
+              Choose source
+            </label>
+          </div>
+          <p class="hint">Choose the identity to copy. Click one detected face to confirm.</p>
+          <div id="source-stage" class="image-stage"></div>
+          <p id="source-status" class="status">Waiting for upload.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <p class="card-kicker">Step 2</p>
+              <h2>Target Image</h2>
+            </div>
+            <label class="upload-button">
+              <input id="target-input" type="file" accept="image/jpeg,image/png" />
+              Choose target
+            </label>
+          </div>
+          <p class="hint">Choose the face to replace inside the target image.</p>
+          <div id="target-stage" class="image-stage"></div>
+          <p id="target-status" class="status">Waiting for upload.</p>
+        </div>
+      </section>
+
+      <section class="actions">
+        <div class="card action-card">
+          <div class="action-grid">
+            <label class="field">
+              <span>Output format</span>
+              <select id="output-format">
+                <option value="jpeg" selected>JPEG</option>
+                <option value="png">PNG</option>
+              </select>
+            </label>
+            <button id="run-job" class="primary-button" disabled>Run Face Swap</button>
+          </div>
+          <p id="job-status" class="status">Upload both images and select one face in each.</p>
+        </div>
+      </section>
+
+      <section class="result-section">
+        <div class="card result-card">
+          <div class="card-head">
+            <div>
+              <p class="card-kicker">Step 4</p>
+              <h2>Result Preview</h2>
+            </div>
+            <button id="download-result" class="secondary-button hidden" type="button">
+              Download Result
+            </button>
+          </div>
+          <p id="result-status" class="status">
+            Run a job to preview the generated image here.
+          </p>
+          <div id="result-stage" class="result-stage">
+            <p class="hint">The generated face swap will appear here when processing finishes.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <template id="stage-template">
+      <div class="preview-shell">
+        <img class="preview-image" alt="" />
+        <div class="face-layer"></div>
+      </div>
+    </template>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
