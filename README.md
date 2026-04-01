@@ -1,20 +1,22 @@
 # Face Swap Running on Lambda
 
-Serverless face swap service built around `inswapper_128.onnx`, AWS Lambda, S3 direct uploads, and a static frontend behind CloudFront.
+[English README](./README.en.md)
 
-## What this project demonstrates
+`inswapper_128.onnx`를 기반으로 한 서버리스 얼굴 스왑 서비스입니다. 정적 웹은 CloudFront 뒤의 S3에서 제공하고, 추론은 AWS Lambda에서 비동기로 처리합니다.
 
-- Serverless ML inference with a container-based Lambda workload
-- Async job orchestration with API Gateway, SQS, DynamoDB, and S3
-- Production-oriented observability with CloudWatch dashboards and alarms
-- GitHub Actions deployment to AWS using GitHub OIDC instead of long-lived access keys
+## 이 프로젝트가 보여주는 것
 
-## Architecture
+- 컨테이너 기반 Lambda를 이용한 서버리스 ML 추론
+- API Gateway, SQS, DynamoDB, S3를 조합한 비동기 작업 처리
+- CloudWatch 대시보드와 알람을 포함한 운영 관측성
+- 장기 액세스 키 없이 GitHub OIDC로 AWS에 배포하는 CI/CD
+
+## 아키텍처
 
 ```mermaid
 flowchart LR
-    User[Browser User] --> CF[CloudFront]
-    CF --> S3Site[S3 Static Site]
+    User[브라우저 사용자] --> CF[CloudFront]
+    CF --> S3Site[S3 정적 웹]
     CF --> APIGW[API Gateway /api]
     APIGW --> Presign[Presign Lambda]
     APIGW --> Detect[Detect Lambda]
@@ -31,38 +33,38 @@ flowchart LR
     SNS --> Discord[Optional Discord Bridge]
 ```
 
-- Static frontend is served from S3 through CloudFront at `https://face-swap.aigyeom.com`
-- API Gateway is mounted behind the same distribution under `/api/*`
-- Browser uploads source and target images directly to S3 using presigned URLs
-- Detect Lambda uses `buffalo_l` to find selectable faces
-- Worker Lambda runs `inswapper_128.onnx` asynchronously from SQS and writes results back to S3
-- DynamoDB stores job state and the frontend polls `GET /api/jobs/{jobId}` for completion
+- 정적 프론트엔드는 `https://face-swap.aigyeom.com`에서 제공됩니다.
+- API는 같은 CloudFront 배포 아래 `/api/*` 경로로 노출됩니다.
+- 브라우저는 presigned URL을 받아 원본 이미지를 S3에 직접 업로드합니다.
+- Detect Lambda는 `buffalo_l`로 얼굴을 찾고, 사용자는 얼굴 인덱스를 선택합니다.
+- Worker Lambda는 `inswapper_128.onnx`를 실행해 결과 이미지를 S3에 저장합니다.
+- 프론트엔드는 `GET /api/jobs/{jobId}`를 폴링해 완료 상태와 결과 URL을 가져옵니다.
 
-## Repository Layout
+## 저장소 구조
 
-- `bin/`, `lib/`: AWS CDK application and infrastructure definitions
-- `backend/api/`: Python API Lambdas for presign, job creation, and polling
-- `backend/ml/`: containerized ML Lambda runtime and handlers
-- `backend/ops/`: operational notifier Lambdas
-- `frontend/`: static site assets
+- `bin/`, `lib/`: AWS CDK 앱과 인프라 정의
+- `backend/api/`: presign, job 생성, job 조회용 Python Lambda
+- `backend/ml/`: ML 컨테이너 Lambda 런타임과 핸들러
+- `backend/ops/`: 운영 알림용 Lambda
+- `frontend/`: 정적 웹 자산
 
-## Operations & Observability
+## 운영 관측성
 
-- CloudWatch Dashboard tracks API traffic, error rates, Lambda durations, queue health, custom job metrics, and WAF blocked requests
-- CloudWatch Alarms cover API `5XX`, worker errors, worker max duration, queue age, and DLQ visibility
-- SNS is the central alarm topic
-- Discord delivery is optional and enabled only when `DISCORD_WEBHOOK_SECRET_ARN` is configured through Secrets Manager
-- API access logs are enabled at the API Gateway stage
-- Backend handlers emit structured JSON logs with `service`, `jobId`, `stage`, `status`, `durationMs`, and `requestId`
+- CloudWatch Dashboard에서 API 트래픽, 에러율, Lambda 실행 시간, 큐 상태, 커스텀 메트릭, WAF 차단 수를 확인합니다.
+- CloudWatch Alarm은 API `5XX`, worker 에러, worker 실행 시간, 큐 적체, DLQ 메시지를 감시합니다.
+- 알람은 SNS Topic으로 모이고, 필요하면 Discord 브리지 Lambda로 전달할 수 있습니다.
+- `DISCORD_WEBHOOK_SECRET_ARN`이 없으면 Discord 관련 리소스는 생성되지 않습니다.
+- API Gateway stage access log가 활성화되어 있습니다.
+- 백엔드 핸들러는 `service`, `jobId`, `stage`, `status`, `durationMs`, `requestId`를 포함한 구조화 로그를 남깁니다.
 
 ## CI/CD
 
-GitHub Actions is defined in `.github/workflows/pipeline.yml`.
+GitHub Actions 워크플로우는 [pipeline.yml](/home/gyeom/faceswap/.github/workflows/pipeline.yml#L1)에 있습니다.
 
-- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, Python `py_compile`, optional `cdk synth`
-- `push` on `main`: same validation, then automatic deploy with GitHub OIDC and `cdk deploy`
+- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, Python `py_compile`, 선택적 `cdk synth`
+- `main` push: 같은 검증 후 GitHub OIDC로 AWS 인증하고 `cdk deploy`
 
-Required GitHub repository variables:
+필수 GitHub repository variables:
 
 - `AWS_ROLE_ARN`
 - `CDK_DEFAULT_ACCOUNT`
@@ -70,17 +72,17 @@ Required GitHub repository variables:
 - `ROOT_DOMAIN_NAME`
 - `SITE_SUBDOMAIN`
 
-Optional GitHub secret:
+선택 GitHub secret:
 
 - `DISCORD_WEBHOOK_SECRET_ARN`
 
-Bootstrap note:
+초기 설정 순서:
 
-1. Deploy once locally to create or update the GitHub deploy role and observability resources.
-2. Copy the `GitHubDeployRoleArn` CloudFormation output into the GitHub repo variable `AWS_ROLE_ARN`.
-3. After that, pushes to `main` can deploy automatically.
+1. 로컬에서 한 번 배포해 GitHub deploy role과 관측성 리소스를 생성합니다.
+2. CloudFormation 출력값 `GitHubDeployRoleArn`을 GitHub variable `AWS_ROLE_ARN`에 넣습니다.
+3. 이후부터는 `main` push로 자동 배포할 수 있습니다.
 
-## Local Deployment
+## 로컬 배포
 
 ```bash
 export CDK_DEFAULT_ACCOUNT=701111311029
@@ -94,25 +96,25 @@ npm install
 npm run deploy -- FaceSwapStack --require-approval never
 ```
 
-The stack creates the ACM certificate in `us-east-1`, provisions CloudFront, Route53 alias records, the API, storage, queueing, dashboarding, alarms, and deploy-role resources.
+이 스택은 `us-east-1` ACM 인증서, CloudFront, Route53 alias, API Gateway, S3, SQS, DynamoDB, CloudWatch 리소스, GitHub deploy role을 함께 생성합니다.
 
-## Performance
+## 성능
 
-Measurements below were taken in `ap-northeast-2` with CPU Lambda, `3008MB` memory, `1024x1024` JPEG inputs, and `inswapper_128.onnx + buffalo_l`.
+아래 측정값은 `ap-northeast-2`, CPU Lambda, `3008MB` 메모리, `1024x1024` JPEG 입력, `inswapper_128.onnx + buffalo_l` 기준입니다.
 
-| Path | Cold Start | Warm Start | Max Memory |
+| 경로 | Cold Start | Warm Start | Max Memory |
 | --- | ---: | ---: | ---: |
 | Detect Lambda | 44.52s | 0.78s | ~1.53GB |
 | Worker Lambda | 47.74s | 4.58s | ~3.00GB |
 
-Interpretation:
+해석:
 
-- Detect is acceptable after warm-up, but cold starts are still expensive because `buffalo_l` initialization dominates
-- Worker runs close to the current Lambda memory ceiling in this account and region
-- The current AWS limit here is `3008MB`, so vertical scaling beyond that is not available without moving the workload to a different runtime target
+- Detect는 warm 상태에서는 빠르지만 `buffalo_l` 초기화 때문에 cold start 비용이 큽니다.
+- Worker는 현재 계정/리전의 Lambda 메모리 상한 근처에서 동작합니다.
+- 현재 상한이 `3008MB`라서, 그 이상 수직 확장은 다른 런타임 타깃으로 옮겨야 합니다.
 
-## Notes
+## 참고
 
-- Uploads and generated results expire after 24 hours through S3 lifecycle rules
-- Public access is limited with API Gateway throttling plus WAF rate-based rules
-- The ML image downloads `inswapper_128.onnx` from the pinned Hugging Face commit and preloads `buffalo_l` during image build
+- 업로드 원본과 결과 이미지는 S3 lifecycle로 24시간 후 삭제됩니다.
+- 공개 서비스 보호를 위해 API Gateway throttling과 WAF rate-based rule을 사용합니다.
+- ML 이미지 빌드 시 고정된 Hugging Face 커밋에서 `inswapper_128.onnx`를 받고 `buffalo_l`를 미리 로드합니다.
