@@ -11,26 +11,6 @@
 
 ## 아키텍처
 
-```mermaid
-flowchart LR
-    User[브라우저 사용자] --> CF[CloudFront]
-    CF --> S3Site[S3 정적 웹]
-    CF --> APIGW[API Gateway /api]
-    APIGW --> Presign[Presign Lambda]
-    APIGW --> Detect[Detect Lambda]
-    APIGW --> CreateJob[Create Job Lambda]
-    APIGW --> GetJob[Get Job Lambda]
-    Presign --> Media[(S3 Media Bucket)]
-    Detect --> Media
-    CreateJob --> Jobs[(DynamoDB Jobs)]
-    CreateJob --> Queue[SQS Job Queue]
-    Queue --> Worker[Worker Lambda]
-    Worker --> Media
-    Worker --> Jobs
-    Alarm[CloudWatch Alarms] --> SNS[SNS Alerts]
-    SNS --> Discord[Optional Discord Bridge]
-```
-
 ![Face Swap 아키텍처 다이어그램](./images/facesawp_architecture.png)
 
 - 정적 프론트엔드는 `https://face-swap.aigyeom.com`에서 제공됩니다.
