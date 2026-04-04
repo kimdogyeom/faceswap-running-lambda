@@ -47,3 +47,15 @@ Pull requests should include:
 
 ## Security & Configuration Tips
 Do not commit secrets, API keys, or large model weights. Keep environment-specific values in ignored `.env` files, and store large binaries outside Git unless the repository later adopts Git LFS.
+
+## Review guidelines
+- Write final pull request reviews, summary comments, and follow-up fix completion messages in Korean by default unless the PR author explicitly requests another language. Keep code identifiers, file paths, API fields, error codes, and commands in their original language.
+- Treat secret exposure, authentication bypass, privilege escalation, and any leak of private media or sensitive public data as P0.
+- Treat any change that weakens GitHub OIDC deployment boundaries, IAM least privilege, bucket policies, CloudFront or API access controls, WAF protections, or request throttling as P0 when it can expose data or expand access beyond the intended boundary.
+- Verify the async job pipeline end to end: uploaded media must stay under `uploads/`, generated media under `results/`, failed enqueue paths must not leave orphaned job state, and worker retry or DLQ behavior must remain safe to repeat.
+- Flag missing tests or missing manual verification steps as P1 when a change affects API contracts, job lifecycle state, IAM or deployment behavior, public dashboard calculations, or frontend upload and polling flows.
+- Flag missing documentation as P1 when a change alters deployment inputs, required GitHub or AWS settings, API request or response fields, public dashboard semantics, or incident-response and verification steps.
+- Flag validation regressions, TTL cleanup regressions, async pipeline integrity issues, and other behavior changes that can break upload, job, retry, DLQ, or result delivery guarantees as P1.
+- Flag changes that break the public dashboard privacy contract, especially if they expose `jobId`, upload keys, file names, presigned URLs, raw stack traces, or AWS resource identifiers that are currently kept internal. Treat this as P0 when it leaks private media or other sensitive data, otherwise treat it as P1.
+- Only flag high-confidence issues that are directly tied to the changed diff. Do not speculate.
+- Ignore minor style or naming issues unless they affect correctness, security, or operability.
