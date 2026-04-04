@@ -1,7 +1,5 @@
 # Face Swap Running on Lambda
 
-[English README](./README.en.md)
-
 `inswapper_128.onnx`를 기반으로 한 서버리스 얼굴 스왑 서비스입니다. 정적 웹은 CloudFront 뒤의 S3에서 제공하고, 추론은 AWS Lambda에서 비동기로 처리합니다.
 
 ## 이 프로젝트가 보여주는 것
@@ -32,6 +30,8 @@ flowchart LR
     Alarm[CloudWatch Alarms] --> SNS[SNS Alerts]
     SNS --> Discord[Optional Discord Bridge]
 ```
+
+![Face Swap 아키텍처 다이어그램](./images/facesawp_architecture.png)
 
 - 정적 프론트엔드는 `https://face-swap.aigyeom.com`에서 제공됩니다.
 - API는 같은 CloudFront 배포 아래 `/api/*` 경로로 노출됩니다.
