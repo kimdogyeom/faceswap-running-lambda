@@ -28,6 +28,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Install dependencies
         run: npm ci
 
@@ -57,6 +60,14 @@ jobs:
           backend/ml/download_models.py
           backend/ops/discord_notifier/index.py
 
+      - name: Terraform fmt
+        run: terraform -chdir=terraform/bootstrap fmt -check -recursive
+
+      - name: Terraform validate
+        run: |
+          terraform -chdir=terraform/bootstrap init -backend=false
+          terraform -chdir=terraform/bootstrap validate
+
       - name: CDK synth
         if: ${{ vars.CDK_DEFAULT_ACCOUNT != '' && vars.AWS_REGION != '' && vars.ROOT_DOMAIN_NAME != '' && vars.SITE_SUBDOMAIN != '' }}
         env:
@@ -64,8 +75,6 @@ jobs:
           CDK_DEFAULT_REGION: ${{ vars.AWS_REGION }}
           ROOT_DOMAIN_NAME: ${{ vars.ROOT_DOMAIN_NAME }}
           SITE_SUBDOMAIN: ${{ vars.SITE_SUBDOMAIN }}
-          GITHUB_REPOSITORY_OWNER: kimdogyeom
-          GITHUB_REPOSITORY_NAME: faceswap-running-lambda
         run: npm run synth
 
   deploy:
@@ -100,7 +109,5 @@ jobs:
           CDK_DEFAULT_REGION: ${{ vars.AWS_REGION }}
           ROOT_DOMAIN_NAME: ${{ vars.ROOT_DOMAIN_NAME }}
           SITE_SUBDOMAIN: ${{ vars.SITE_SUBDOMAIN }}
-          GITHUB_REPOSITORY_OWNER: kimdogyeom
-          GITHUB_REPOSITORY_NAME: faceswap-running-lambda
-          DISCORD_WEBHOOK_SECRET_ARN: ${{ secrets.DISCORD_WEBHOOK_SECRET_ARN }}
+          DISCORD_WEBHOOK_SECRET_ARN: ${{ vars.DISCORD_WEBHOOK_SECRET_ARN }}
         run: npm run deploy -- FaceSwapStack --require-approval never

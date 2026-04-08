@@ -24,6 +24,7 @@
 ## 저장소 구조
 
 - `bin/`, `lib/`: AWS CDK 앱과 인프라 정의
+- `terraform/bootstrap/`: GitHub Actions OIDC, deploy role, repository variable 부트스트랩
 - `backend/api/`: presign, job 생성, job 조회용 Python Lambda
 - `backend/ml/`: ML 컨테이너 Lambda 런타임과 핸들러
 - `backend/ops/`: 운영 알림용 Lambda
@@ -50,26 +51,32 @@
 
 GitHub Actions 워크플로우는 [pipeline.yml](/home/gyeom/faceswap/.github/workflows/pipeline.yml#L1)에 있습니다.
 
-- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, `node --check frontend/dashboard.js`, Python `py_compile`, 선택적 `cdk synth`
+- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, `node --check frontend/dashboard.js`, Python `py_compile`, `terraform fmt`, `terraform validate`, 선택적 `cdk synth`
 - `main` push: 같은 검증 후 GitHub OIDC로 AWS 인증하고 `cdk deploy`
 
-필수 GitHub repository variables:
+`terraform/bootstrap`는 아래 GitHub repository variables를 관리합니다.
 
 - `AWS_ROLE_ARN`
 - `CDK_DEFAULT_ACCOUNT`
 - `AWS_REGION`
 - `ROOT_DOMAIN_NAME`
 - `SITE_SUBDOMAIN`
+- `DISCORD_WEBHOOK_SECRET_ARN` (선택)
 
-선택 GitHub secret:
+bootstrap 적용에 필요한 로컬 입력:
 
-- `DISCORD_WEBHOOK_SECRET_ARN`
+- `GITHUB_TOKEN`
+- AWS 자격 증명
+- [terraform.tfvars.example](/home/gyeom/faceswap/terraform/bootstrap/terraform.tfvars.example#L1) 기반 설정값
 
 초기 설정 순서:
 
-1. 로컬에서 한 번 배포해 GitHub deploy role과 관측성 리소스를 생성합니다.
-2. CloudFormation 출력값 `GitHubDeployRoleArn`을 GitHub variable `AWS_ROLE_ARN`에 넣습니다.
-3. 이후부터는 `main` push로 자동 배포할 수 있습니다.
+1. `cp terraform/bootstrap/terraform.tfvars.example terraform/bootstrap/terraform.tfvars`
+2. `terraform/bootstrap/terraform.tfvars`를 현재 계정과 도메인 값으로 채웁니다.
+3. `export GITHUB_TOKEN="$(gh auth token)"`
+4. `terraform -chdir=terraform/bootstrap init`
+5. `terraform -chdir=terraform/bootstrap apply`
+6. 이후부터는 `main` push로 자동 배포할 수 있습니다.
 
 ## 로컬 배포
 
@@ -78,14 +85,12 @@ export CDK_DEFAULT_ACCOUNT=701111311029
 export CDK_DEFAULT_REGION=ap-northeast-2
 export ROOT_DOMAIN_NAME=aigyeom.com
 export SITE_SUBDOMAIN=face-swap
-export GITHUB_REPOSITORY_OWNER=kimdogyeom
-export GITHUB_REPOSITORY_NAME=faceswap-running-lambda
 
 npm install
 npm run deploy -- FaceSwapStack --require-approval never
 ```
 
-이 스택은 `us-east-1` ACM 인증서, CloudFront, Route53 alias, API Gateway, S3, SQS, DynamoDB, CloudWatch 리소스, GitHub deploy role을 함께 생성합니다.
+이 스택은 `us-east-1` ACM 인증서, CloudFront, Route53 alias, API Gateway, S3, SQS, DynamoDB, CloudWatch 리소스를 함께 생성합니다. GitHub Actions deploy role과 repository variable은 `terraform/bootstrap`이 관리합니다.
 
 ## 성능
 

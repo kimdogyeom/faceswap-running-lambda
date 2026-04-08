@@ -7,4 +7,9 @@ __pycache__/
 *.pyc
 dist/
 tmp/
-
+portfolio/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log

@@ -42,8 +42,6 @@ export class FaceSwapStack extends Stack {
     const enableEdgeWaf = deploymentRegion === "us-east-1";
     const uploadsMaxBytes = 10 * 1024 * 1024;
     const metricNamespace = "FaceSwapService";
-    const githubRepoOwner = process.env.GITHUB_REPOSITORY_OWNER ?? "kimdogyeom";
-    const githubRepoName = process.env.GITHUB_REPOSITORY_NAME ?? "faceswap-running-lambda";
     const discordWebhookSecretArn = process.env.DISCORD_WEBHOOK_SECRET_ARN ?? "";
     const apiWebAclName = `${this.stackName.toLowerCase()}-api-acl`;
     const edgeWebAclName = `${this.stackName.toLowerCase()}-edge-acl`;
@@ -452,42 +450,6 @@ function handler(event) {
       target: route53.RecordTarget.fromAlias(new route53Targets.CloudFrontTarget(distribution)),
     });
 
-    const githubOidcProvider = iam.OpenIdConnectProvider.fromOpenIdConnectProviderArn(
-      this,
-      "GitHubOidcProvider",
-      `arn:${Aws.PARTITION}:iam::${Aws.ACCOUNT_ID}:oidc-provider/token.actions.githubusercontent.com`,
-    );
-
-    const githubDeployRole = new iam.Role(this, "GitHubDeployRole", {
-      roleName: `${this.stackName}-github-deploy-role`,
-      description: `Deploy ${this.stackName} from GitHub Actions for ${githubRepoOwner}/${githubRepoName}`,
-      assumedBy: new iam.OpenIdConnectPrincipal(githubOidcProvider).withConditions({
-        StringEquals: {
-          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub": `repo:${githubRepoOwner}/${githubRepoName}:ref:refs/heads/main`,
-        },
-      }),
-    });
-
-    githubDeployRole.addToPolicy(
-      new iam.PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        resources: [`arn:${Aws.PARTITION}:iam::${Aws.ACCOUNT_ID}:role/cdk-hnb659fds-*`],
-      }),
-    );
-    githubDeployRole.addToPolicy(
-      new iam.PolicyStatement({
-        actions: ["ssm:GetParameter"],
-        resources: [`arn:${Aws.PARTITION}:ssm:*:${Aws.ACCOUNT_ID}:parameter/cdk-bootstrap/hnb659fds/version`],
-      }),
-    );
-    githubDeployRole.addToPolicy(
-      new iam.PolicyStatement({
-        actions: ["cloudformation:DescribeStacks", "cloudformation:GetTemplate", "cloudformation:ListStacks"],
-        resources: ["*"],
-      }),
-    );
-
     if (discordWebhookSecretArn) {
       const discordSecret = secretsmanager.Secret.fromSecretCompleteArn(
         this,
@@ -729,10 +691,6 @@ function handler(event) {
 
     new CfnOutput(this, "AlarmTopicArn", {
       value: alarmTopic.topicArn,
-    });
-
-    new CfnOutput(this, "GitHubDeployRoleArn", {
-      value: githubDeployRole.roleArn,
     });
   }
 }

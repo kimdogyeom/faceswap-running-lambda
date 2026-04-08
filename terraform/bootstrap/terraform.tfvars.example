@@ -1,0 +1,12 @@
+aws_region        = "ap-northeast-2"
+github_repo_owner = "kimdogyeom"
+github_repo_name  = "faceswap-running-lambda"
+root_domain_name  = "aigyeom.com"
+site_subdomain    = "face-swap"
+
+# Set this to true only when the AWS account does not already have the
+# token.actions.githubusercontent.com OIDC provider.
+create_github_oidc_provider = false
+
+# existing_github_oidc_provider_arn = "arn:aws:iam::701111311029:oidc-provider/token.actions.githubusercontent.com"
+# discord_webhook_secret_arn        = "arn:aws:secretsmanager:ap-northeast-2:701111311029:secret:example"
