@@ -1,0 +1,17 @@
+{
+    "Label": "Duration",
+    "Datapoints": [
+        {
+            "Timestamp": "2026-04-16T16:08:00+00:00",
+            "Average": 79589.63500000001,
+            "Maximum": 95304.19,
+            "Unit": "Milliseconds"
+        },
+        {
+            "Timestamp": "2026-04-16T16:13:00+00:00",
+            "Average": 19702.403333333332,
+            "Maximum": 57571.43,
+            "Unit": "Milliseconds"
+        }
+    ]
+}

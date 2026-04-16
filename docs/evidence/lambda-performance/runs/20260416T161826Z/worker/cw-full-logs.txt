@@ -1,0 +1,286 @@
+{
+    "events": [
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356065127,
+            "message": "START RequestId: 223366fe-3073-5fab-abcd-04a53d79655b Version: $LATEST\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614063990261696148057198432393587695721002503864188928"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356065166,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"process_job\", \"status\": \"started\", \"requestId\": \"223366fe-3073-5fab-abcd-04a53d79655b\", \"jobId\": \"8d0b456874ec4223b8d77bfb888aee1a\"}\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614063991131425210799892734913480708354288602597425153"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356067084,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064033904254501581627920378988355293845971067863042"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356067371,
+            "message": "find model: /opt/insightface/models/buffalo_l/1k3d68.onnx landmark_3d_68 ['None', 3, 192, 192] 0.0 1.0\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064040304568373559916761999739499543925723284242435"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356067435,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064041731816066265876643058025468993420859666989060"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356067438,
+            "message": "find model: /opt/insightface/models/buffalo_l/2d106det.onnx landmark_2d_106 ['None', 3, 192, 192] 0.0 1.0\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064041798718301861468512482632623811365944184930309"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356067622,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064045902055418391103170525204785978664461285326854"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356067622,
+            "message": "find model: /opt/insightface/models/buffalo_l/det_10g.onnx detection [1, 3, '?', '?'] 127.5 128.0\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064045902055418391103170525204785978664461285326855"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356067650,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064046526476283949960618488204897612818583452778504"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356067652,
+            "message": "find model: /opt/insightface/models/buffalo_l/genderage.onnx genderage ['None', 3, 96, 96] 0.0 1.0\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064046571077774347021864771276334158115306464739337"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356069420,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064085998795285349163579006426240200418449038114826"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356069651,
+            "message": "find model: /opt/insightface/models/buffalo_l/w600k_r50.onnx recognition ['None', 3, 112, 112] 127.5 127.5\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064091150267426209737524701177161182189956919590923"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356069651,
+            "message": "set det-size: (640, 640)\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064091150267426209737524701177161182189956919590924"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356070925,
+            "message": "/var/lang/lib/python3.10/site-packages/insightface/utils/transform.py:68: FutureWarning: `rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064119561416809137751407017682240536202515538640909"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356070925,
+            "message": "To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064119561416809137751407017682240536202515538640910"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356070925,
+            "message": "P = np.linalg.lstsq(X_homo, Y)[0].T # Affine matrix. 3 x 4\n",
+            "ingestionTime": 1776356076465,
+            "eventId": "39614064119561416809137751407017682240536202515538640911"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356177993,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356187016,
+            "eventId": "39614066507257603725414510058611885904718686143157698560"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356178768,
+            "message": "inswapper-shape: [1, 3, 128, 128]\n",
+            "ingestionTime": 1776356187016,
+            "eventId": "39614066524540681254275742993302067566021166310292520961"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356182440,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"record_public_metrics\", \"status\": \"error\", \"requestId\": \"223366fe-3073-5fab-abcd-04a53d79655b\", \"jobId\": \"8d0b456874ec4223b8d77bfb888aee1a\", \"durationMs\": 122000, \"message\": \"An error occurred (ValidationException) when calling the UpdateItem operation: Invalid UpdateExpression: Attribute name is a reserved keyword; reserved keyword: ttl\"}\n",
+            "ingestionTime": 1776356187016,
+            "eventId": "39614066606429017623280191169021225063185949760252608514"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356182440,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"process_job\", \"status\": \"completed\", \"requestId\": \"223366fe-3073-5fab-abcd-04a53d79655b\", \"jobId\": \"8d0b456874ec4223b8d77bfb888aee1a\", \"durationMs\": 122000, \"detectDurationMs\": 6515, \"swapDurationMs\": 110321, \"resultImageKey\": \"results/8d0b456874ec4223b8d77bfb888aee1a.jpg\"}\n",
+            "ingestionTime": 1776356187016,
+            "eventId": "39614066606429017623280191169021225063185949760252608515"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356182443,
+            "message": "END RequestId: 223366fe-3073-5fab-abcd-04a53d79655b\n",
+            "ingestionTime": 1776356187016,
+            "eventId": "39614066606495919858875783038445832218003894844770549764"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356182443,
+            "message": "REPORT RequestId: 223366fe-3073-5fab-abcd-04a53d79655b\tDuration: 117315.59 ms\tBilled Duration: 121741 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\tInit Duration: 4425.30 ms\t\n",
+            "ingestionTime": 1776356187016,
+            "eventId": "39614066606495919858875783038445832218003894844770549765"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356269419,
+            "message": "START RequestId: 2f5bf9f8-2d0c-5f09-b629-9ba320ea887e Version: $LATEST\n",
+            "ingestionTime": 1776356278433,
+            "eventId": "39614068546125534246275261507172720813708114736000270336"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356269429,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"process_job\", \"status\": \"started\", \"requestId\": \"2f5bf9f8-2d0c-5f09-b629-9ba320ea887e\", \"jobId\": \"95a21d5572bc4968b8905add4ba3b352\"}\n",
+            "ingestionTime": 1776356278433,
+            "eventId": "39614068546348541698260567738588077996434598351060074497"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356273853,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"record_public_metrics\", \"status\": \"error\", \"requestId\": \"2f5bf9f8-2d0c-5f09-b629-9ba320ea887e\", \"jobId\": \"95a21d5572bc4968b8905add4ba3b352\", \"durationMs\": 4000, \"message\": \"An error occurred (ValidationException) when calling the UpdateItem operation: Invalid UpdateExpression: Attribute name is a reserved keyword; reserved keyword: ttl\"}\n",
+            "ingestionTime": 1776356278433,
+            "eventId": "39614068645007038456560044516742095634630949653517434882"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356273853,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"process_job\", \"status\": \"completed\", \"requestId\": \"2f5bf9f8-2d0c-5f09-b629-9ba320ea887e\", \"jobId\": \"95a21d5572bc4968b8905add4ba3b352\", \"durationMs\": 4000, \"detectDurationMs\": 1296, \"swapDurationMs\": 2821, \"resultImageKey\": \"results/95a21d5572bc4968b8905add4ba3b352.jpg\"}\n",
+            "ingestionTime": 1776356278433,
+            "eventId": "39614068645007038456560044516742095634630949653517434883"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356273854,
+            "message": "END RequestId: 2f5bf9f8-2d0c-5f09-b629-9ba320ea887e\n",
+            "ingestionTime": 1776356278433,
+            "eventId": "39614068645029339201758575139883631352903598015023415300"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356273854,
+            "message": "REPORT RequestId: 2f5bf9f8-2d0c-5f09-b629-9ba320ea887e\tDuration: 4434.76 ms\tBilled Duration: 4435 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\t\n",
+            "ingestionTime": 1776356278433,
+            "eventId": "39614068645029339201758575139883631352903598015023415301"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356282961,
+            "message": "START RequestId: 16315a3c-d8c3-5644-90ca-3867d5393b69 Version: $LATEST\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068848122225724776960106230188797385757698598567936"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356282971,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"process_job\", \"status\": \"started\", \"requestId\": \"16315a3c-d8c3-5644-90ca-3867d5393b69\", \"jobId\": \"70138dd12bf142c680007840b22262ed\"}\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068848345233176762266337645545980112241313658372097"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356287365,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"record_public_metrics\", \"status\": \"error\", \"requestId\": \"16315a3c-d8c3-5644-90ca-3867d5393b69\", \"jobId\": \"70138dd12bf142c680007840b22262ed\", \"durationMs\": 5000, \"message\": \"An error occurred (ValidationException) when calling the UpdateItem operation: Invalid UpdateExpression: Attribute name is a reserved keyword; reserved keyword: ttl\"}\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068946334707579105824421553492070129141770936320002"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356287365,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"process_job\", \"status\": \"completed\", \"requestId\": \"16315a3c-d8c3-5644-90ca-3867d5393b69\", \"jobId\": \"70138dd12bf142c680007840b22262ed\", \"durationMs\": 5000, \"detectDurationMs\": 1298, \"swapDurationMs\": 2850, \"resultImageKey\": \"results/70138dd12bf142c680007840b22262ed.jpg\"}\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068946334707579105824421553492070129141770936320003"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356287367,
+            "message": "END RequestId: 16315a3c-d8c3-5644-90ca-3867d5393b69\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068946379309069502885667836563506674438493948280836"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356287367,
+            "message": "REPORT RequestId: 16315a3c-d8c3-5644-90ca-3867d5393b69\tDuration: 4405.31 ms\tBilled Duration: 4406 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\t\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068946379309069502885667836563506674438493948280837"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356288373,
+            "message": "START RequestId: 2cbc330a-5bc7-5d96-82c8-515156376ae1 Version: $LATEST\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068968813858739224692548221496088958690168964579334"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356288383,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"process_job\", \"status\": \"started\", \"requestId\": \"2cbc330a-5bc7-5d96-82c8-515156376ae1\", \"jobId\": \"d56dca3aabc0495cb61f5e88879fb917\"}\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068969036866191209998779636853271685173784024383495"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356292686,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"record_public_metrics\", \"status\": \"error\", \"requestId\": \"2cbc330a-5bc7-5d96-82c8-515156376ae1\", \"jobId\": \"d56dca3aabc0495cb61f5e88879fb917\", \"durationMs\": 4000, \"message\": \"An error occurred (ValidationException) when calling the UpdateItem operation: Invalid UpdateExpression: Attribute name is a reserved keyword; reserved keyword: ttl\"}\n",
+            "ingestionTime": 1776356301707,
+            "eventId": "39614069064996972780487270169420625862666397296210935808"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356292686,
+            "message": "{\"service\": \"ml.worker\", \"stage\": \"process_job\", \"status\": \"completed\", \"requestId\": \"2cbc330a-5bc7-5d96-82c8-515156376ae1\", \"jobId\": \"d56dca3aabc0495cb61f5e88879fb917\", \"durationMs\": 4000, \"detectDurationMs\": 1285, \"swapDurationMs\": 2826, \"resultImageKey\": \"results/d56dca3aabc0495cb61f5e88879fb917.jpg\"}\n",
+            "ingestionTime": 1776356301707,
+            "eventId": "39614069064996972780487270169420625862666397296210935809"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356292688,
+            "message": "END RequestId: 2cbc330a-5bc7-5d96-82c8-515156376ae1\n",
+            "ingestionTime": 1776356301707,
+            "eventId": "39614069065041574270884331415703697299211694019222896642"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356292688,
+            "message": "REPORT RequestId: 2cbc330a-5bc7-5d96-82c8-515156376ae1\tDuration: 4314.43 ms\tBilled Duration: 4315 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\t\n",
+            "ingestionTime": 1776356301707,
+            "eventId": "39614069065041574270884331415703697299211694019222896643"
+        }
+    ],
+    "searchedLogStreams": [],
+    "nextToken": "Bxkq6kVGFtq2y_MoigeqscPOdhXVbhiVtLoAmXb5jCq5qRg5QFHentoMOXW3r7Pg5LwsmFHCFN_HcylWzKeaectmAUTAJFztdjDXpvzxUsT5-xx4EpJzknksJwvFdryc8Pj9nKQsfM4sXs7HV6XCaKjzbRA4vvJhVDmIIF-8GszWqZlF8ZjROeyxdm-Na7UkaAX5mMI2KqDKqzZHARVEMj_e-Wlk-7ZPgV1zbA7oQjR1Zvi_jDpsvYHqpwsCM5BXS2Gl3sSl5zWGUM2uO2d4ZeNQ0iVViheYnSS4suj80Mw"
+}

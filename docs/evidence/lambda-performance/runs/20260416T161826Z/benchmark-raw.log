@@ -1,0 +1,8 @@
+{"ts":"2026-04-16T16:18:02Z","step":"create_job","attempt":1}
+{"ts":"2026-04-16T16:18:02Z","step":"create_job_response","attempt":1,"http":202,"status":"queued","jobId":"70138dd12bf142c680007840b22262ed"}
+{"ts":"2026-04-16T16:18:08Z","step":"poll","attempt":1,"jobId":"70138dd12bf142c680007840b22262ed","poll":1,"http":200,"status":"completed"}
+{"ts":"2026-04-16T16:18:08Z","step":"job_done","attempt":1,"jobId":"70138dd12bf142c680007840b22262ed","status":"completed","durationMs":null}
+{"ts":"2026-04-16T16:18:08Z","step":"create_job","attempt":2}
+{"ts":"2026-04-16T16:18:08Z","step":"create_job_response","attempt":2,"http":202,"status":"queued","jobId":"d56dca3aabc0495cb61f5e88879fb917"}
+{"ts":"2026-04-16T16:18:13Z","step":"poll","attempt":2,"jobId":"d56dca3aabc0495cb61f5e88879fb917","poll":1,"http":200,"status":"completed"}
+{"ts":"2026-04-16T16:18:13Z","step":"job_done","attempt":2,"jobId":"d56dca3aabc0495cb61f5e88879fb917","status":"completed","durationMs":null}

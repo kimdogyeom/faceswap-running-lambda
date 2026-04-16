@@ -98,8 +98,20 @@ npm run deploy -- FaceSwapStack --require-approval never
 
 | 경로 | Cold Start | Warm Start | Max Memory |
 | --- | ---: | ---: | ---: |
-| Detect Lambda | 44.52s | 0.78s | ~1.53GB |
-| Worker Lambda | 47.74s | 4.58s | ~3.00GB |
+| Detect Lambda | 95.30s *(raw max 95,304.19 ms)* | 0.78s *(raw sample 759.87~775.91 ms)* | ~1.52GB *(raw Max Memory Used 1,498~1,522 MB)* |
+| Worker Lambda | 117.32s *(raw max 117,315.59 ms)* | 4.43s *(raw samples 4,314.43~4,434.76 ms)* | ~3.00GB *(raw Max Memory Used 3,002 MB)* |
+
+### 원본 근거
+- Detect / Worker Lambda의 cold start, warm start, max memory 증빙은 아래 특정 run 기준으로 재검증할 수 있습니다.
+- 증빙 run: `docs/evidence/lambda-performance/runs/20260416T161826Z`
+  - run 메타데이터: `docs/evidence/lambda-performance/runs/20260416T161826Z/collection-metadata.json`
+  - Detect raw: `docs/evidence/lambda-performance/runs/20260416T161826Z/detect/cw-report-events.txt`
+  - Worker raw: `docs/evidence/lambda-performance/runs/20260416T161826Z/worker/cw-report-events.txt`
+  - 벤치마크 로그: `docs/evidence/lambda-performance/runs/20260416T161826Z/benchmark-raw.log`
+  - Duration metric(요약 검증): `docs/evidence/lambda-performance/runs/20260416T161826Z/detect/cw-metric-duration.json`, `docs/evidence/lambda-performance/runs/20260416T161826Z/worker/cw-metric-duration.json`
+  - InitDuration/Max Memory Used metric 조회는 이번 run에서 응답 데이터가 비어 있어 `cw-report-events.txt`의 `Max Memory Used` 값으로 근거를 확인합니다.
+- 수집 실행: `scripts/collect-lambda-performance-evidence.sh` (`WINDOW_MINUTES=30`, `DETECT_FUNCTION_NAME=FaceSwapStack-DetectFunctionEACAD5CE-nJCl45cRPT6C`, `WORKER_FUNCTION_NAME=FaceSwapStack-WorkerFunctionACE6A4B0-n976sSQCzRxs`)
+- 수집 가이드: `docs/evidence/lambda-performance/README.md`
 
 해석:
 

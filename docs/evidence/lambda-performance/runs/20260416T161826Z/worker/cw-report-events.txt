@@ -1,0 +1,34 @@
+{
+    "events": [
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356182443,
+            "message": "REPORT RequestId: 223366fe-3073-5fab-abcd-04a53d79655b\tDuration: 117315.59 ms\tBilled Duration: 121741 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\tInit Duration: 4425.30 ms\t\n",
+            "ingestionTime": 1776356187016,
+            "eventId": "39614066606495919858875783038445832218003894844770549765"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356273854,
+            "message": "REPORT RequestId: 2f5bf9f8-2d0c-5f09-b629-9ba320ea887e\tDuration: 4434.76 ms\tBilled Duration: 4435 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\t\n",
+            "ingestionTime": 1776356278433,
+            "eventId": "39614068645029339201758575139883631352903598015023415301"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356287367,
+            "message": "REPORT RequestId: 16315a3c-d8c3-5644-90ca-3867d5393b69\tDuration: 4405.31 ms\tBilled Duration: 4406 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\t\n",
+            "ingestionTime": 1776356291983,
+            "eventId": "39614068946379309069502885667836563506674438493948280837"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356292688,
+            "message": "REPORT RequestId: 2cbc330a-5bc7-5d96-82c8-515156376ae1\tDuration: 4314.43 ms\tBilled Duration: 4315 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\t\n",
+            "ingestionTime": 1776356301707,
+            "eventId": "39614069065041574270884331415703697299211694019222896643"
+        }
+    ],
+    "searchedLogStreams": [],
+    "nextToken": "Bxkq6kVGFtq2y_MoigeqscPOdhXVbhiVtLoAmXb5jCq5qRg5QFHentoMOXW3r7Pg5LwsmFHCFN_HcylWzKeaectmAUTAJFztdjDXpvzxUsT5-xx4EpJzknksJwvFdryc8Pj9nKQsfM4sXs7HV6XCaKjzbRA4vvJhVDmIIF-8GszWqZlF8ZjROeyxdm-Na7UkaAX5mMI2KqDKqzZHARVEMvYHETiUhXdSA2ADxSakfX8Eckkbhz5fjgNQ3aKFY1RMVUEi2PyM7GuYN0rqXHpL1IBUG2jY4rcMf6nqkiKRPRDTkZL-rIUSZGYNVFfbqP5Gq6C0ecR41AG7It-Y8303MA"
+}
