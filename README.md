@@ -32,7 +32,7 @@
 
 ## 운영 관측성
 
-- CloudWatch Dashboard에서 API 트래픽, 에러율, Lambda 실행 시간, 큐 상태, 커스텀 메트릭, WAF 차단 수를 확인합니다.
+- CloudWatch Dashboard에서 API 트래픽, 에러율, Lambda 실행 시간, 큐 상태, 커스텀 메트릭을 확인합니다.
 - CloudWatch Alarm은 API `5XX`, worker 에러, worker 실행 시간, 큐 적체, DLQ 메시지를 감시합니다.
 - 알람은 SNS Topic으로 모이고, 필요하면 Discord 브리지 Lambda로 전달할 수 있습니다.
 - `DISCORD_WEBHOOK_SECRET_ARN`이 없으면 Discord 관련 리소스는 생성되지 않습니다.
@@ -110,5 +110,5 @@ npm run deploy -- FaceSwapStack --require-approval never
 ## 참고
 
 - 업로드 원본과 결과 이미지는 S3 lifecycle로 24시간 후 삭제됩니다.
-- 공개 서비스 보호를 위해 API Gateway throttling과 WAF rate-based rule을 사용합니다.
+- 공개 서비스 보호를 위해 API Gateway throttling과 Lambda reserved concurrency 제한을 사용합니다.
 - ML 이미지 빌드 시 고정된 Hugging Face 커밋에서 `inswapper_128.onnx`를 받고 `buffalo_l`를 미리 로드합니다.

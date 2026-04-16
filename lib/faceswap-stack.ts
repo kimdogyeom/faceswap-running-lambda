@@ -27,7 +27,6 @@ import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as snsSubscriptions from "aws-cdk-lib/aws-sns-subscriptions";
 import * as sqs from "aws-cdk-lib/aws-sqs";
-import * as wafv2 from "aws-cdk-lib/aws-wafv2";
 import { Construct } from "constructs";
 
 export class FaceSwapStack extends Stack {
@@ -38,13 +37,9 @@ export class FaceSwapStack extends Stack {
     const siteSubdomain = process.env.SITE_SUBDOMAIN ?? "face-swap";
     const siteDomain = `${siteSubdomain}.${rootDomain}`;
     const siteOrigin = `https://${siteDomain}`;
-    const deploymentRegion = props?.env?.region ?? process.env.CDK_DEFAULT_REGION ?? "us-east-1";
-    const enableEdgeWaf = deploymentRegion === "us-east-1";
     const uploadsMaxBytes = 10 * 1024 * 1024;
     const metricNamespace = "FaceSwapService";
     const discordWebhookSecretArn = process.env.DISCORD_WEBHOOK_SECRET_ARN ?? "";
-    const apiWebAclName = `${this.stackName.toLowerCase()}-api-acl`;
-    const edgeWebAclName = `${this.stackName.toLowerCase()}-edge-acl`;
 
     const hostedZone = route53.HostedZone.fromLookup(this, "HostedZone", {
       domainName: rootDomain,
@@ -184,6 +179,7 @@ export class FaceSwapStack extends Stack {
 
     const detectFn = new lambda.DockerImageFunction(this, "DetectFunction", {
       ...mlFunctionBase,
+      reservedConcurrentExecutions: 5,
       code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, "../backend/ml"), {
         cmd: ["handlers.detect.handler"],
       }),
@@ -191,6 +187,7 @@ export class FaceSwapStack extends Stack {
 
     const workerFn = new lambda.DockerImageFunction(this, "WorkerFunction", {
       ...mlFunctionBase,
+      reservedConcurrentExecutions: 5,
       code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, "../backend/ml"), {
         cmd: ["handlers.worker.handler"],
       }),
@@ -330,76 +327,9 @@ function handler(event) {
       enableAcceptEncodingGzip: true,
     });
 
-    const apiWebAcl = new wafv2.CfnWebACL(this, "ApiWebAcl", {
-      name: apiWebAclName,
-      defaultAction: { allow: {} },
-      scope: "REGIONAL",
-      visibilityConfig: {
-        cloudWatchMetricsEnabled: true,
-        metricName: "faceSwapApiAcl",
-        sampledRequestsEnabled: true,
-      },
-      rules: [
-        {
-          name: "RateLimit",
-          priority: 1,
-          action: { block: {} },
-          statement: {
-            rateBasedStatement: {
-              aggregateKeyType: "IP",
-              limit: 1000,
-            },
-          },
-          visibilityConfig: {
-            cloudWatchMetricsEnabled: true,
-            metricName: "faceSwapApiRateLimit",
-            sampledRequestsEnabled: true,
-          },
-        },
-      ],
-    });
-
-    new wafv2.CfnWebACLAssociation(this, "ApiWebAclAssociation", {
-      resourceArn: api.deploymentStage.stageArn,
-      webAclArn: apiWebAcl.attrArn,
-    });
-
-    const edgeWebAcl =
-      enableEdgeWaf
-        ? new wafv2.CfnWebACL(this, "SiteWebAcl", {
-            name: edgeWebAclName,
-            defaultAction: { allow: {} },
-            scope: "CLOUDFRONT",
-            visibilityConfig: {
-              cloudWatchMetricsEnabled: true,
-              metricName: "faceSwapEdgeAcl",
-              sampledRequestsEnabled: true,
-            },
-            rules: [
-              {
-                name: "RateLimit",
-                priority: 1,
-                action: { block: {} },
-                statement: {
-                  rateBasedStatement: {
-                    aggregateKeyType: "IP",
-                    limit: 1000,
-                  },
-                },
-                visibilityConfig: {
-                  cloudWatchMetricsEnabled: true,
-                  metricName: "faceSwapEdgeRateLimit",
-                  sampledRequestsEnabled: true,
-                },
-              },
-            ],
-          })
-        : undefined;
-
     const distribution = new cloudfront.Distribution(this, "SiteDistribution", {
       domainNames: [siteDomain],
       certificate,
-      webAclId: edgeWebAcl?.attrArn,
       defaultRootObject: "index.html",
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
@@ -536,31 +466,6 @@ function handler(event) {
       statistic: "Average",
       period: Duration.minutes(5),
     });
-    const apiWafBlockedMetric = new cloudwatch.Metric({
-      namespace: "AWS/WAFV2",
-      metricName: "BlockedRequests",
-      statistic: "Sum",
-      period: Duration.minutes(5),
-      dimensionsMap: {
-        WebACL: apiWebAclName,
-        Rule: "ALL",
-        Region: deploymentRegion,
-      },
-    });
-    const edgeWafBlockedMetric = enableEdgeWaf
-      ? new cloudwatch.Metric({
-          namespace: "AWS/WAFV2",
-          metricName: "BlockedRequests",
-          statistic: "Sum",
-          period: Duration.minutes(5),
-          dimensionsMap: {
-            WebACL: edgeWebAclName,
-            Rule: "ALL",
-            Region: "Global",
-          },
-        })
-      : undefined;
-
     const dashboard = new cloudwatch.Dashboard(this, "OperationsDashboard", {
       dashboardName: `${this.stackName}-operations`,
     });
@@ -604,14 +509,6 @@ function handler(event) {
         width: 12,
         left: [jobsCreatedMetric, jobsCompletedMetric, jobsFailedMetric],
         right: [detectRuntimeMetric, swapRuntimeMetric, jobTotalRuntimeMetric],
-      }),
-    );
-
-    dashboard.addWidgets(
-      new cloudwatch.GraphWidget({
-        title: "WAF Blocked Requests",
-        width: 12,
-        left: edgeWafBlockedMetric ? [apiWafBlockedMetric, edgeWafBlockedMetric] : [apiWafBlockedMetric],
       }),
     );
 
