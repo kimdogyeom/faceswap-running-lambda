@@ -239,7 +239,7 @@ export class FaceSwapStack extends Stack {
         throttlingBurstLimit: 20,
         loggingLevel: apigateway.MethodLoggingLevel.INFO,
         dataTraceEnabled: false,
-        metricsEnabled: true,
+        metricsEnabled: false,
         accessLogDestination: new apigateway.LogGroupLogDestination(apiAccessLogGroup),
         accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields({
           httpMethod: true,
