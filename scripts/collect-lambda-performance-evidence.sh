@@ -10,6 +10,12 @@ DETECT_FUNCTION_NAME="${DETECT_FUNCTION_NAME:-}"
 WORKER_FUNCTION_NAME="${WORKER_FUNCTION_NAME:-}"
 BENCHMARK_LOG_PATH="${BENCHMARK_LOG_PATH:-}"
 OUT_DIR="${OUT_DIR:-docs/evidence/lambda-performance/runs}"
+REDACT_SCRIPT="${REDACT_SCRIPT:-scripts/redact-sensitive-log.sh}"
+
+if [[ ! -x "$REDACT_SCRIPT" ]]; then
+  echo "redaction script is missing or not executable: $REDACT_SCRIPT"
+  exit 1
+fi
 
 if [[ -z "${DETECT_FUNCTION_NAME}" && -n "${STACK_NAME}" ]]; then
   DETECT_FUNCTION_NAME="$(aws cloudformation describe-stack-resources \
@@ -91,16 +97,23 @@ collect_metric() {
     --output json > "$output"
 }
 
+sanitize_log_copy() {
+  local input_path="$1"
+  local output_path="$2"
+  "$REDACT_SCRIPT" "$input_path" "$output_path"
+}
+
 if [[ -n "$BENCHMARK_LOG_PATH" ]]; then
   if [[ ! -f "$BENCHMARK_LOG_PATH" ]]; then
     echo "BENCHMARK_LOG_PATH provided but not found: $BENCHMARK_LOG_PATH"
     exit 1
   fi
-  cp "$BENCHMARK_LOG_PATH" "${RUN_DIR}/benchmark-raw.log"
+  sanitize_log_copy "$BENCHMARK_LOG_PATH" "${RUN_DIR}/benchmark-raw.log"
 else
   cat > "${RUN_DIR}/benchmark-raw.log" <<'INNER'
 benchmark log not included in this run.
 Set BENCHMARK_LOG_PATH=<path_to_raw_benchmark_log> to copy benchmark output.
+Sensitive values should be redacted before any evidence log is committed.
 INNER
 fi
 
