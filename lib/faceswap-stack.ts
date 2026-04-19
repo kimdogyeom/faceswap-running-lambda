@@ -35,21 +35,29 @@ export class FaceSwapStack extends Stack {
 
     const rootDomain = process.env.ROOT_DOMAIN_NAME ?? "aigyeom.com";
     const siteSubdomain = process.env.SITE_SUBDOMAIN ?? "face-swap";
+    const deploySite = process.env.DEPLOY_SITE !== "false";
     const siteDomain = `${siteSubdomain}.${rootDomain}`;
     const siteOrigin = `https://${siteDomain}`;
+
+    const mlReservedConcurrency = process.env.ML_RESERVED_CONCURRENCY
+      ? Number(process.env.ML_RESERVED_CONCURRENCY)
+      : undefined;
     const uploadsMaxBytes = 10 * 1024 * 1024;
     const metricNamespace = "FaceSwapService";
     const discordWebhookSecretArn = process.env.DISCORD_WEBHOOK_SECRET_ARN ?? "";
 
-    const hostedZone = route53.HostedZone.fromLookup(this, "HostedZone", {
-      domainName: rootDomain,
-    });
-
-    const certificate = new acm.DnsValidatedCertificate(this, "SiteCertificate", {
-      domainName: siteDomain,
-      hostedZone,
-      region: "us-east-1",
-    });
+    let hostedZone: route53.IHostedZone | undefined;
+    let certificate: acm.DnsValidatedCertificate | undefined;
+    if (deploySite) {
+      hostedZone = route53.HostedZone.fromLookup(this, "HostedZone", {
+        domainName: rootDomain,
+      });
+      certificate = new acm.DnsValidatedCertificate(this, "SiteCertificate", {
+        domainName: siteDomain,
+        hostedZone,
+        region: "us-east-1",
+      });
+    }
 
     const siteBucket = new s3.Bucket(this, "SiteBucket", {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
@@ -179,7 +187,9 @@ export class FaceSwapStack extends Stack {
 
     const detectFn = new lambda.DockerImageFunction(this, "DetectFunction", {
       ...mlFunctionBase,
-      reservedConcurrentExecutions: 5,
+      ...(mlReservedConcurrency === undefined
+        ? {}
+        : { reservedConcurrentExecutions: mlReservedConcurrency }),
       code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, "../backend/ml"), {
         cmd: ["handlers.detect.handler"],
       }),
@@ -187,7 +197,9 @@ export class FaceSwapStack extends Stack {
 
     const workerFn = new lambda.DockerImageFunction(this, "WorkerFunction", {
       ...mlFunctionBase,
-      reservedConcurrentExecutions: 5,
+      ...(mlReservedConcurrency === undefined
+        ? {}
+        : { reservedConcurrentExecutions: mlReservedConcurrency }),
       code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, "../backend/ml"), {
         cmd: ["handlers.worker.handler"],
       }),
@@ -327,58 +339,61 @@ function handler(event) {
       enableAcceptEncodingGzip: true,
     });
 
-    const distribution = new cloudfront.Distribution(this, "SiteDistribution", {
-      domainNames: [siteDomain],
-      certificate,
-      defaultRootObject: "index.html",
-      defaultBehavior: {
-        origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
-        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        responseHeadersPolicy: cloudfront.ResponseHeadersPolicy.SECURITY_HEADERS,
-        functionAssociations: [
-          {
-            eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
-            function: spaRewrite,
+    let distribution: cloudfront.Distribution | undefined;
+    if (deploySite && certificate && hostedZone) {
+      distribution = new cloudfront.Distribution(this, "SiteDistribution", {
+        domainNames: [siteDomain],
+        certificate,
+        defaultRootObject: "index.html",
+        defaultBehavior: {
+          origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
+          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+          responseHeadersPolicy: cloudfront.ResponseHeadersPolicy.SECURITY_HEADERS,
+          functionAssociations: [
+            {
+              eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+              function: spaRewrite,
+            },
+          ],
+        },
+        additionalBehaviors: {
+          "api/metrics/*": {
+            origin: apiOrigin,
+            viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+            cachePolicy: metricsCachePolicy,
+            originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
           },
-        ],
-      },
-      additionalBehaviors: {
-        "api/metrics/*": {
-          origin: apiOrigin,
-          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-          cachePolicy: metricsCachePolicy,
-          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+          "api/*": {
+            origin: apiOrigin,
+            viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+            cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+            originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+          },
         },
-        "api/*": {
-          origin: apiOrigin,
-          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
-          cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
-        },
-      },
-    });
+      });
 
-    new s3deploy.BucketDeployment(this, "FrontendDeployment", {
-      destinationBucket: siteBucket,
-      sources: [s3deploy.Source.asset(path.join(__dirname, "../frontend"))],
-      distribution,
-      distributionPaths: ["/*"],
-    });
+      new s3deploy.BucketDeployment(this, "FrontendDeployment", {
+        destinationBucket: siteBucket,
+        sources: [s3deploy.Source.asset(path.join(__dirname, "../frontend"))],
+        distribution,
+        distributionPaths: ["/*"],
+      });
 
-    new route53.ARecord(this, "SiteAliasRecord", {
-      zone: hostedZone,
-      recordName: siteSubdomain,
-      target: route53.RecordTarget.fromAlias(new route53Targets.CloudFrontTarget(distribution)),
-    });
+      new route53.ARecord(this, "SiteAliasRecord", {
+        zone: hostedZone,
+        recordName: siteSubdomain,
+        target: route53.RecordTarget.fromAlias(new route53Targets.CloudFrontTarget(distribution)),
+      });
 
-    new route53.AaaaRecord(this, "SiteAliasRecordIpv6", {
-      zone: hostedZone,
-      recordName: siteSubdomain,
-      target: route53.RecordTarget.fromAlias(new route53Targets.CloudFrontTarget(distribution)),
-    });
+      new route53.AaaaRecord(this, "SiteAliasRecordIpv6", {
+        zone: hostedZone,
+        recordName: siteSubdomain,
+        target: route53.RecordTarget.fromAlias(new route53Targets.CloudFrontTarget(distribution)),
+      });
+    }
 
     if (discordWebhookSecretArn) {
       const discordSecret = secretsmanager.Secret.fromSecretCompleteArn(
@@ -567,7 +582,7 @@ function handler(event) {
     }
 
     new CfnOutput(this, "SiteUrl", {
-      value: siteOrigin,
+      value: deploySite ? siteOrigin : "disabled",
     });
 
     new CfnOutput(this, "MediaBucketName", {
@@ -575,12 +590,14 @@ function handler(event) {
     });
 
     new CfnOutput(this, "PublicApiBaseUrl", {
-      value: `${siteOrigin}/api`,
+      value: `https://${api.restApiId}.execute-api.${this.region}.${Aws.URL_SUFFIX}/${api.deploymentStage.stageName}/api`,
     });
 
-    new CfnOutput(this, "CloudFrontDistributionId", {
-      value: distribution.distributionId,
-    });
+    if (distribution) {
+      new CfnOutput(this, "CloudFrontDistributionId", {
+        value: distribution.distributionId,
+      });
+    }
 
     new CfnOutput(this, "OperationsDashboardName", {
       value: dashboard.dashboardName,
