@@ -1,0 +1,16 @@
+title = "faceswap custom gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "aws-presigned-url-or-token"
+description = "AWS presigned URLs and temporary STS query parameters must not be committed"
+regex = '''(?i)("uploadUrl"\s*:\s*"https://[^"\n]*X-Amz-Credential=[^"\n]*"|X-Amz-(Credential|Security-Token|Signature)=[^&\s"'<>]+|<AWSAccessKeyId>ASIA[0-9A-Z]{16}</AWSAccessKeyId>|"AWSAccessKeyId"\s*:\s*"ASIA[0-9A-Z]{16}")'''
+keywords = [
+  "X-Amz-Credential=",
+  "X-Amz-Security-Token=",
+  "X-Amz-Signature=",
+  "<AWSAccessKeyId>ASIA",
+  "\"AWSAccessKeyId\": \"ASIA",
+]
