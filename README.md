@@ -51,8 +51,23 @@
 
 GitHub Actions 워크플로우는 [pipeline.yml](/home/gyeom/faceswap/.github/workflows/pipeline.yml#L1)에 있습니다.
 
-- `pull_request`: `npm ci`, `npm run check`, `node --check frontend/app.js`, `node --check frontend/dashboard.js`, Python `py_compile`, `terraform fmt`, `terraform validate`, 선택적 `cdk synth`
+- `pull_request`: `Gitleaks` secret scan 후 `npm ci`, `npm run check`, `node --check frontend/app.js`, `node --check frontend/dashboard.js`, Python `py_compile`, `terraform fmt`, `terraform validate`, 선택적 `cdk synth`
 - `main` push: 같은 검증 후 GitHub OIDC로 AWS 인증하고 `cdk deploy`
+
+### 로컬 가드레일
+
+민감정보 커밋을 막기 위해 `pre-commit`과 `Gitleaks`를 함께 사용합니다.
+
+```bash
+pipx install pre-commit
+# or: python3 -m venv .venv-precommit && .venv-precommit/bin/pip install pre-commit
+pre-commit install --hook-type pre-commit --hook-type pre-push
+pre-commit run --all-files
+```
+
+- `pre-commit`: `Gitleaks`, private key 탐지, merge conflict, JSON/YAML 검사, large file 검사
+- `pre-push`: `npm run check`, frontend syntax 검사, Python `py_compile`, Terraform `fmt`/`validate`
+- 설정 파일: `.pre-commit-config.yaml`, `.gitleaks.toml`
 
 `terraform/bootstrap`는 아래 GitHub repository variables를 관리합니다.
 
@@ -112,6 +127,7 @@ npm run deploy -- FaceSwapStack --require-approval never
   - InitDuration/Max Memory Used metric 조회는 이번 run에서 응답 데이터가 비어 있어 `cw-report-events.txt`의 `Max Memory Used` 값으로 근거를 확인합니다.
 - 수집 실행: `scripts/collect-lambda-performance-evidence.sh` (`WINDOW_MINUTES=30`, `DETECT_FUNCTION_NAME=FaceSwapStack-DetectFunctionEACAD5CE-nJCl45cRPT6C`, `WORKER_FUNCTION_NAME=FaceSwapStack-WorkerFunctionACE6A4B0-n976sSQCzRxs`)
 - 수집 가이드: `docs/evidence/lambda-performance/README.md`
+- 저장소에 남기는 benchmark 증빙 로그는 `scripts/redact-sensitive-log.sh`로 presigned URL과 STS 토큰을 정제한 사본입니다.
 
 해석:
 

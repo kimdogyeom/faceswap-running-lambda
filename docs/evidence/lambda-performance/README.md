@@ -22,11 +22,20 @@ WORKER_FUNCTION_NAME=MyWorkerFunction \
 ./scripts/collect-lambda-performance-evidence.sh
 ```
 
-benchmark 실행 로그를 별도 수집한 경우 `BENCHMARK_LOG_PATH`에 전달하면 그대로 복사됩니다.
+benchmark 실행 로그를 별도 수집한 경우 `BENCHMARK_LOG_PATH`에 전달하면 정제 사본으로 복사됩니다.
 
 ```bash
 BENCHMARK_LOG_PATH=~/tmp/benchmark-output.log \
 ./scripts/collect-lambda-performance-evidence.sh
+```
+
+`BENCHMARK_LOG_PATH`로 복사되는 로그는 `scripts/redact-sensitive-log.sh`를 거쳐 저장됩니다.
+`uploadUrl`, `X-Amz-Credential`, `X-Amz-Security-Token`, `X-Amz-Signature`, `AWSAccessKeyId` 같은 값은 정제본에 남기지 않습니다.
+
+추가 sidecar 로그를 따로 보관해야 하면 커밋 전에 같은 스크립트로 직접 정제합니다.
+
+```bash
+scripts/redact-sensitive-log.sh /tmp/faceswap-bench/curl-upload.err docs/evidence/lambda-performance/runs/<run-id>/curl-upload.err
 ```
 
 ## 실행 산출물
@@ -45,3 +54,4 @@ BENCHMARK_LOG_PATH=~/tmp/benchmark-output.log \
 - `runs/<run-id>/collection-metadata.json`
 
 각 파일은 `aws` CLI raw 응답/필터 결과이므로 README 성능 요약 수치를 즉시 재검증할 수 있습니다.
+benchmark/raw 텍스트 로그는 정제본만 저장소에 보관합니다.
