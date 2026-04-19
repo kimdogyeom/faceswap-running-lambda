@@ -1,0 +1,454 @@
+{
+    "events": [
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355896089,
+            "message": "INIT_REPORT Init Duration: 9999.38 ms\tPhase: init\tStatus: timeout\n",
+            "ingestionTime": 1776355896368,
+            "eventId": "39614060220588329278837723615754550495896011787240013824"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355927243,
+            "message": "START RequestId: f9b2c83c-b70f-416f-9262-517abeacc214 Version: $LATEST\n",
+            "ingestionTime": 1776355936623,
+            "eventId": "39614060915345745193860757015823946180574037891291217920"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355932004,
+            "message": "START RequestId: ea98cbd5-8260-4887-9662-7cd66997ad19 Version: $LATEST\n",
+            "ingestionTime": 1776355942061,
+            "eventId": "39614061021519593084065053799249275193125651212054888448"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355950869,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355960778,
+            "eventId": "39614061442223151254345259386948295599920835826764611584"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355950889,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355960775,
+            "eventId": "39614061442669166158315871849775404401861980245008384000"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355951127,
+            "message": "find model: /opt/insightface/models/buffalo_l/1k3d68.onnx landmark_3d_68 ['None', 3, 192, 192] 0.0 1.0\n",
+            "ingestionTime": 1776355960775,
+            "eventId": "39614061447976743515566160157460905350752290283431723009"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355951138,
+            "message": "find model: /opt/insightface/models/buffalo_l/1k3d68.onnx landmark_3d_68 ['None', 3, 192, 192] 0.0 1.0\n",
+            "ingestionTime": 1776355960778,
+            "eventId": "39614061448222051712749997012021403815263245071873343489"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355952021,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355960778,
+            "eventId": "39614061467913609723052537245997443050011748281654050818"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355952023,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355960775,
+            "eventId": "39614061467958211213449598492276908923045222192790175746"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355952024,
+            "message": "find model: /opt/insightface/models/buffalo_l/2d106det.onnx landmark_2d_106 ['None', 3, 192, 192] 0.0 1.0\n",
+            "ingestionTime": 1776355960778,
+            "eventId": "39614061467980511958648129115422050204829693366171992067"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355952027,
+            "message": "find model: /opt/insightface/models/buffalo_l/2d106det.onnx landmark_2d_106 ['None', 3, 192, 192] 0.0 1.0\n",
+            "ingestionTime": 1776355960775,
+            "eventId": "39614061468047414194243720984843051796135815638814097411"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355955182,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355960775,
+            "eventId": "39614061538406265295607836996388242946341396190182309892"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355955182,
+            "message": "find model: /opt/insightface/models/buffalo_l/det_10g.onnx detection [1, 3, '?', '?'] 127.5 128.0\n",
+            "ingestionTime": 1776355960775,
+            "eventId": "39614061538406265295607836996388242946341396190182309893"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355955228,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355960778,
+            "eventId": "39614061539432099574740245660902491550395043631333244932"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355955228,
+            "message": "find model: /opt/insightface/models/buffalo_l/det_10g.onnx detection [1, 3, '?', '?'] 127.5 128.0\n",
+            "ingestionTime": 1776355960778,
+            "eventId": "39614061539432099574740245660902491550395043631333244933"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355955369,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355960775,
+            "eventId": "39614061542576504647733063523855422263326639791800647686"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355955371,
+            "message": "find model: /opt/insightface/models/buffalo_l/genderage.onnx genderage ['None', 3, 96, 96] 0.0 1.0\n",
+            "ingestionTime": 1776355960775,
+            "eventId": "39614061542621106138130124770138493699871936514812608519"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355955371,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355960778,
+            "eventId": "39614061542621106138130124770142099263383759326688444422"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355955372,
+            "message": "find model: /opt/insightface/models/buffalo_l/genderage.onnx genderage ['None', 3, 96, 96] 0.0 1.0\n",
+            "ingestionTime": 1776355960778,
+            "eventId": "39614061542643406883328655393283634981656407688194424839"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355987286,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062254349389149234962375200423036747112818803408896"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355987287,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062254371689894433492998337272262890126537937911808"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355987547,
+            "message": "find model: /opt/insightface/models/buffalo_l/w600k_r50.onnx recognition ['None', 3, 112, 112] 127.5 127.5\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062260169883646051455015136559013778700529492819969"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355987547,
+            "message": "set det-size: (640, 640)\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062260169883646051455015136559013778700529492819970"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355987572,
+            "message": "find model: /opt/insightface/models/buffalo_l/w600k_r50.onnx recognition ['None', 3, 112, 112] 127.5 127.5\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062260727402276014720593679638462724544209513807873"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355987572,
+            "message": "set det-size: (640, 640)\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062260727402276014720593679638462724544209513807874"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355990766,
+            "message": "/var/lang/lib/python3.10/site-packages/insightface/utils/transform.py:68: FutureWarning: `rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062331955982440121530907740036133433776217243779075"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355990766,
+            "message": "To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062331955982440121530907740036133433776217243779076"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355990766,
+            "message": "P = np.linalg.lstsq(X_homo, Y)[0].T # Affine matrix. 3 x 4\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062331955982440121530907740036133433776217243779077"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355990785,
+            "message": "/var/lang/lib/python3.10/site-packages/insightface/utils/transform.py:68: FutureWarning: `rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062332379696598893612747433901272743729728228884483"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355990785,
+            "message": "To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062332379696598893612747433901272743729728228884484"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355990785,
+            "message": "P = np.linalg.lstsq(X_homo, Y)[0].T # Affine matrix. 3 x 4\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062332379696598893612747433901272743729728228884485"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355991604,
+            "message": "{\"service\": \"ml.detect\", \"stage\": \"detect_faces\", \"status\": \"success\", \"requestId\": \"f9b2c83c-b70f-416f-9262-517abeacc214\", \"durationMs\": 64329, \"imageKey\": \"uploads/source/da000632bf6d4a8a805c4b7d8ad3085b.png\", \"facesDetected\": 1}\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062350644006916490193100351654538042737801626845190"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355991605,
+            "message": "END RequestId: f9b2c83c-b70f-416f-9262-517abeacc214\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062350666307661688723723493190256315386163132825607"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]f7eeb2a71bc046639ef4013c45650e3c",
+            "timestamp": 1776355991606,
+            "message": "REPORT RequestId: f9b2c83c-b70f-416f-9262-517abeacc214\tDuration: 95304.19 ms\tBilled Duration: 95305 ms\tMemory Size: 3008 MB\tMax Memory Used: 1498 MB\t\n",
+            "ingestionTime": 1776355996302,
+            "eventId": "39614062350688608406887254346634725974588034524638806024"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355991608,
+            "message": "{\"service\": \"ml.detect\", \"stage\": \"detect_faces\", \"status\": \"success\", \"requestId\": \"ea98cbd5-8260-4887-9662-7cd66997ad19\", \"durationMs\": 59571, \"imageKey\": \"uploads/source/da000632bf6d4a8a805c4b7d8ad3085b.png\", \"facesDetected\": 1}\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062350733209897284315592913110919003696605279289350"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355991611,
+            "message": "END RequestId: ea98cbd5-8260-4887-9662-7cd66997ad19\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062350800112132879907462337718073821641689797230599"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776355991611,
+            "message": "REPORT RequestId: ea98cbd5-8260-4887-9662-7cd66997ad19\tDuration: 59605.37 ms\tBilled Duration: 63876 ms\tMemory Size: 3008 MB\tMax Memory Used: 1520 MB\tInit Duration: 4269.71 ms\t\n",
+            "ingestionTime": 1776355996298,
+            "eventId": "39614062350800112132879907462337718073821641689797230600"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776355998499,
+            "message": "INIT_REPORT Init Duration: 9999.11 ms\tPhase: init\tStatus: timeout\n",
+            "ingestionTime": 1776355998746,
+            "eventId": "39614062504407645060358839664194916955279333983102369792"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356023349,
+            "message": "START RequestId: 247a4101-e608-4738-9686-c2a02b93d3b1 Version: $LATEST\n",
+            "ingestionTime": 1776356032383,
+            "eventId": "39614063058581163243844824772022108726083462562269954048"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356037428,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356046807,
+            "eventId": "39614063372553354893957467999141475244737150609941594112"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356037677,
+            "message": "find model: /opt/insightface/models/buffalo_l/1k3d68.onnx landmark_3d_68 ['None', 3, 192, 192] 0.0 1.0\n",
+            "ingestionTime": 1776356046807,
+            "eventId": "39614063378106240448391593161383869094626592624930717697"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356038265,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356046807,
+            "eventId": "39614063391219078625127599568606871438943829190447202306"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356038269,
+            "message": "find model: /opt/insightface/models/buffalo_l/2d106det.onnx landmark_2d_106 ['None', 3, 192, 192] 0.0 1.0\n",
+            "ingestionTime": 1776356046807,
+            "eventId": "39614063391308281605921722061173014312034422636471123971"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356039823,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356046807,
+            "eventId": "39614063425963639644438310423119520507729976416764690436"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356039823,
+            "message": "find model: /opt/insightface/models/buffalo_l/det_10g.onnx detection [1, 3, '?', '?'] 127.5 128.0\n",
+            "ingestionTime": 1776356046807,
+            "eventId": "39614063425963639644438310423119520507729976416764690437"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356039929,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356046807,
+            "eventId": "39614063428327518635482556476122306644630702736398614534"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356039931,
+            "message": "find model: /opt/insightface/models/buffalo_l/genderage.onnx genderage ['None', 3, 96, 96] 0.0 1.0\n",
+            "ingestionTime": 1776356046807,
+            "eventId": "39614063428372120125879617722405378081175999459410575367"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776356048100,
+            "message": "START RequestId: 74aa34e2-67fd-4d64-b095-f91280b123f1 Version: $LATEST\n",
+            "ingestionTime": 1776356057117,
+            "eventId": "39614063610546907652676278178074404134891390136287821824"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776356048875,
+            "message": "{\"service\": \"ml.detect\", \"stage\": \"detect_faces\", \"status\": \"success\", \"requestId\": \"74aa34e2-67fd-4d64-b095-f91280b123f1\", \"durationMs\": 744, \"imageKey\": \"uploads/source/da000632bf6d4a8a805c4b7d8ad3085b.png\", \"facesDetected\": 1}\n",
+            "ingestionTime": 1776356057117,
+            "eventId": "39614063627829985181537511112764585796193870303422644225"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776356048877,
+            "message": "END RequestId: 74aa34e2-67fd-4d64-b095-f91280b123f1\n",
+            "ingestionTime": 1776356057117,
+            "eventId": "39614063627874586671934572359047657232739167026434605058"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776356048877,
+            "message": "REPORT RequestId: 74aa34e2-67fd-4d64-b095-f91280b123f1\tDuration: 775.91 ms\tBilled Duration: 776 ms\tMemory Size: 3008 MB\tMax Memory Used: 1520 MB\t\n",
+            "ingestionTime": 1776356057117,
+            "eventId": "39614063627874586671934572359047657232739167026434605059"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356053300,
+            "message": "Applied providers: ['CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}}\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063726510782685035518520341829155146327078607781888"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776356053522,
+            "message": "START RequestId: 53c84299-26de-4c32-bd21-ad465b661e46 Version: $LATEST\n",
+            "ingestionTime": 1776356057117,
+            "eventId": "39614063731461548119109316851481068609190806221713637380"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356053630,
+            "message": "find model: /opt/insightface/models/buffalo_l/w600k_r50.onnx recognition ['None', 3, 112, 112] 127.5 127.5\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063733870028600550624157048616185120286375581319169"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356053630,
+            "message": "set det-size: (640, 640)\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063733870028600550624157048616185120286375581319170"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776356054281,
+            "message": "{\"service\": \"ml.detect\", \"stage\": \"detect_faces\", \"status\": \"success\", \"requestId\": \"53c84299-26de-4c32-bd21-ad465b661e46\", \"durationMs\": 749, \"imageKey\": \"uploads/target/e1ddaeea4293428cbdd07fba30630013.png\", \"facesDetected\": 1}\n",
+            "ingestionTime": 1776356057117,
+            "eventId": "39614063748387813724794059815906678778130912604752773125"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776356054283,
+            "message": "END RequestId: 53c84299-26de-4c32-bd21-ad465b661e46\n",
+            "ingestionTime": 1776356057117,
+            "eventId": "39614063748432415215191121062189750214676209327764733958"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]02f987e7e4254bda9c9e78cc4179581f",
+            "timestamp": 1776356054283,
+            "message": "REPORT RequestId: 53c84299-26de-4c32-bd21-ad465b661e46\tDuration: 759.87 ms\tBilled Duration: 760 ms\tMemory Size: 3008 MB\tMax Memory Used: 1520 MB\t\n",
+            "ingestionTime": 1776356057117,
+            "eventId": "39614063748432415215191121062189750214676209327764733959"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356055817,
+            "message": "/var/lang/lib/python3.10/site-packages/insightface/utils/transform.py:68: FutureWarning: `rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063782641758349737096967587232047402252989160488963"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356055817,
+            "message": "To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063782641758349737096967587232047402252989160488964"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356055817,
+            "message": "P = np.linalg.lstsq(X_homo, Y)[0].T # Affine matrix. 3 x 4\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063782641758349737096967587232047402252989160488965"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356056259,
+            "message": "{\"service\": \"ml.detect\", \"stage\": \"detect_faces\", \"status\": \"success\", \"requestId\": \"247a4101-e608-4738-9686-c2a02b93d3b1\", \"durationMs\": 32878, \"imageKey\": \"uploads/source/da000632bf6d4a8a805c4b7d8ad3085b.png\", \"facesDetected\": 1}\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063792498687727487632396146019523912828774803832838"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356056262,
+            "message": "END RequestId: 247a4101-e608-4738-9686-c2a02b93d3b1\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063792565589963083224265570626678730773859321774087"
+        },
+        {
+            "logStreamName": "2026/04/16/[$LATEST]7c38500d569f4aec9c4038ffb98f6bf7",
+            "timestamp": 1776356056262,
+            "message": "REPORT RequestId: 247a4101-e608-4738-9686-c2a02b93d3b1\tDuration: 57571.43 ms\tBilled Duration: 57572 ms\tMemory Size: 3008 MB\tMax Memory Used: 1522 MB\t\n",
+            "ingestionTime": 1776356062313,
+            "eventId": "39614063792565589963083224265570626678730773859321774088"
+        }
+    ],
+    "searchedLogStreams": [],
+    "nextToken": "Bxkq6kVGFtq2y_MoigeqscPOdhXVbhiVtLoAmXb5jCoPJmL3Oi5-9fxMQ3BYR1jgNEn5j3CnvPr9O5WhmTBqouDBiJUCodIBnmu7zjTrumqCDaLu5U1r1oTalc5XDWIojyoD0VEFVjyZ1BrgGaQVR-zUYrVIpSrBI7j0QM_yFP0sGLa2aXRmr_kZxEIXBEn-vt3YrSecWrsNwvO4uW5k6NvT-9x5KttKCVcZfemOKz3mJlicOpbSjvZBlO2ae5_y7WC622G5DxOQ18DZz_qNSF_QB37HaK1DQtIBWak7b84"
+}

@@ -1,0 +1,12 @@
+{
+  "runId": "20260416T161630Z",
+  "region": "ap-northeast-2",
+  "windowMinutes": 60,
+  "startTime": "2026-04-16T15:16:30Z",
+  "endTime": "2026-04-16T16:16:30Z",
+  "stackName": "FaceSwapStack",
+  "detectFunctionName": "FaceSwapStack-DetectFunctionEACAD5CE-nJCl45cRPT6C",
+  "workerFunctionName": "FaceSwapStack-WorkerFunctionACE6A4B0-n976sSQCzRxs",
+  "periodSeconds": 60,
+  "limit": 300
+}

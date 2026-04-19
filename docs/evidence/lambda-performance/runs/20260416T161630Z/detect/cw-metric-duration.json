@@ -1,0 +1,29 @@
+{
+    "Label": "Duration",
+    "Datapoints": [
+        {
+            "Timestamp": "2026-04-16T16:13:00+00:00",
+            "Average": 57571.43,
+            "Maximum": 57571.43,
+            "Unit": "Milliseconds"
+        },
+        {
+            "Timestamp": "2026-04-16T16:14:00+00:00",
+            "Average": 767.89,
+            "Maximum": 775.91,
+            "Unit": "Milliseconds"
+        },
+        {
+            "Timestamp": "2026-04-16T16:11:00+00:00",
+            "Average": 95304.19,
+            "Maximum": 95304.19,
+            "Unit": "Milliseconds"
+        },
+        {
+            "Timestamp": "2026-04-16T16:12:00+00:00",
+            "Average": 63875.08,
+            "Maximum": 63875.08,
+            "Unit": "Milliseconds"
+        }
+    ]
+}

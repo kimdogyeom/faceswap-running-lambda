@@ -1,0 +1,13 @@
+{
+    "events": [
+        {
+            "logStreamName": "2026/04/16/[$LATEST]e4af412109264b44875e43a7c3c69c42",
+            "timestamp": 1776356182443,
+            "message": "REPORT RequestId: 223366fe-3073-5fab-abcd-04a53d79655b\tDuration: 117315.59 ms\tBilled Duration: 121741 ms\tMemory Size: 3008 MB\tMax Memory Used: 3002 MB\tInit Duration: 4425.30 ms\t\n",
+            "ingestionTime": 1776356187016,
+            "eventId": "39614066606495919858875783038445832218003894844770549765"
+        }
+    ],
+    "searchedLogStreams": [],
+    "nextToken": "Bxkq6kVGFtq2y_MoigeqscPOdhXVbhiVtLoAmXb5jCp7uilqOiPAiIhY4-t0Yo25lDVQTexgJ2JBxQCUiqUEYvbOV1AcDU44pBoaNiwoZff5fmFsAva8DrcO3oztnes7Iphie8ASZM2PFSx2yMXajPT1Ran0NM7vjSyiFrL0Ej09KZY7zWQZ-5ILcdcJwZYjm17uELw5PGHa9Eq1pLkdsVLHhzw2XmmbeUEc7zAVWziPgb-dHt8CAIbUiaRD1uND4dthnHE4jVHfVRbCVI4jTLPib2DZcr7tYqRn49tJyg0"
+}
